@@ -1,0 +1,9 @@
+== Tenet
+
+A Clojure(Script) library, which helps to create explicit and understandable results to unify and simplify the data flow.
+
+**Status**: Prototyping
+
+=== License
+
+Copyright © 2022 lazy-cat.io
