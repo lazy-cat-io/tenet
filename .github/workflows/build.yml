@@ -1,0 +1,146 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup clojure
+        uses: DeLaGuardo/setup-clojure@5.1
+        with:
+          cli: latest
+          bb: latest
+
+      - name: Setup clj-kondo
+        uses: DeLaGuardo/setup-clj-kondo@master
+        with:
+          version: '2022.04.08'
+
+      - name: Setup cljstyle
+        uses: just-sultanov/setup-cljstyle@v1
+        with:
+          version: '0.15.0'
+
+      - name: Cache deps
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+            ~/.cpcache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      - name: Run linters
+        run: bb lint
+
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup openjdk
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Setup clojure
+        uses: DeLaGuardo/setup-clojure@5.1
+        with:
+          cli: latest
+          bb: latest
+
+      - name: Cache deps
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+            ~/.cpcache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      - name: Setup deps
+        run: bb setup
+
+      - name: Run tests
+        run: bb test
+
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup environment variables
+        run: >-
+          echo 'CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }}' >> $GITHUB_ENV;
+          echo 'CLOJARS_PASSWORD=${{ secrets.CLOJARS_PASSWORD }}' >> $GITHUB_ENV;
+
+      - name: Setup openjdk
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup clojure
+        uses: DeLaGuardo/setup-clojure@5.1
+        with:
+          cli: latest
+          bb: latest
+
+      - name: Cache deps
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+            ~/.cpcache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      - name: Show version
+        run: bb version
+
+      - name: Show project info
+        run: bb project
+
+      - name: Run build jar
+        run: bb jar
