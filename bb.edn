@@ -1,0 +1,68 @@
+{:min-bb-version
+ "0.8.0"
+
+ :deps
+ {io.lazy-cat/tools.project {:mvn/version "0.1.82"}}
+
+ :tasks
+ {:requires        ([tools.project :as project]
+                    [tools.print :as print])
+
+  :init            (do
+                     (def -project (project/read-project))
+                     (def -version (:version -project)))
+
+  :enter           (let [{:keys [doc print-doc?]
+                          :or   {print-doc? true}} (current-task)]
+                     (when (and print-doc? doc)
+                       (println (format "▸ [%s] %s" (:name -project) doc))))
+
+  ;;;;
+  ;; Tasks
+  ;;;;
+
+  version          {:doc        "Show version"
+                    :print-doc? false
+                    :task       (print -version)}
+
+  project          {:doc        "Show project info"
+                    :print-doc? false
+                    :task       (print/pretty -project)}
+
+  build.edn        {:doc  "Generate build.edn"
+                    :task (project/write-build-info -project)}
+
+  outdated         {:doc  "Check for outdated dependencies"
+                    :task (clojure "-T:build outdated")}
+
+  outdated:upgrade {:doc  "Upgrade outdated dependencies"
+                    :task (clojure "-T:build outdated:upgrade")}
+
+  lint             {:doc  "Run linters"
+                    :task (do
+                            (shell "cljstyle check src")
+                            (shell "clj-kondo --lint src"))}
+
+  lint:fix         {:doc  "Run linters & fix"
+                    :task (shell "cljstyle fix src")}
+
+  clean            {:doc  "Cleanup"
+                    :task (clojure "-T:build clean")}
+
+  repl             {:doc     "Run REPL"
+                    :depends [clean build.edn]
+                    :task    (clojure "-T:build repl")}
+
+  test             {:doc     "Run tests"
+                    :depends [clean build.edn]
+                    :task    (clojure "-T:build test")}
+
+  jar              {:doc     "Make jar"
+                    :depends [clean build.edn]
+                    :task    (clojure "-T:build jar")}
+
+  install          {:doc  "Install the jar locally"
+                    :task (clojure "-T:build install")}
+
+  deploy           {:doc  "Deploy the jar to clojars"
+                    :task (clojure "-T:build deploy")}}}
