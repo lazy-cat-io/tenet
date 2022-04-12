@@ -38,6 +38,9 @@
   outdated:upgrade {:doc  "Upgrade outdated dependencies"
                     :task (clojure "-T:build outdated:upgrade")}
 
+  setup            {:doc  "Setup dependencies"
+                    :task (shell "npm ci")}
+
   lint             {:doc  "Run linters"
                     :task (do
                             (shell "cljstyle check src")
