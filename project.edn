@@ -1,0 +1,22 @@
+{:name         io.lazy-cat/tenet
+ :version      "0.1.{{ git/commits-count }}{{ version/pre-release }}"
+ :description  "A Clojure(Script) library, which helps to create explicit and understandable results to unify and simplify the data flow."
+ :license      "MIT"
+ :author       "Ilshat Sultanov <ilshat@sultanov.team>"
+ :contributors [{:name  "Ilshat Sultanov"
+                 :email "ilshat@sultanov.team"
+                 :url   "https://github.com/just-sultanov"}]
+ :homepage     "https://github.com/lazy-cat-io/tenet#readme"
+ :repository   {:url "https://github.com/lazy-cat-io/tenet"}
+ :bugs         {:url "https://github.com/lazy-cat-io/tenet/issues"}
+ :keywords     [:clojure :clojurescript :unifier :data-flow]
+
+ :build        {:src-dirs      ["src/main/clojure"]
+                :resource-dirs ["src/main/resources"]
+                :target        "target"
+                :jar-file      "target/tenet.jar"
+                :scm           {:url #ref [:repository :url]}}
+
+ :metadata     {:build/created-at        "{{ build/created-at }}"
+                :git/branch              "{{ git/branch }}"
+                :git/sha                 "{{ git/sha }}"}}
