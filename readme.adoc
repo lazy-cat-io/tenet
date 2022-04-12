@@ -1,9 +1,40 @@
-== Tenet
+image:https://img.shields.io/github/license/lazy-cat-io/tenet[license,link=license]
+image:https://img.shields.io/github/v/release/lazy-cat-io/tenet.svg[https://github.com/lazy-cat-io/tenet/releases]
+image:https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml/badge.svg[https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml]
+image:https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml/badge.svg[https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml]
+
+image:https://img.shields.io/clojars/v/io.lazy-cat/tenet.svg[clojars,link=https://clojars.org/io.lazy-cat/tenet]
+
+== tenet
 
 A Clojure(Script) library, which helps to create explicit and understandable results to unify and simplify the data flow.
 
-**Status**: Prototyping
+**Status**: alpha
+
+=== Default behavior
+
+- `Keyword` - is an anomaly if it is registered in the anomaly registry or inherited from `:tenet.core/error`
+- `Exception`, `js/Error` - are anomalies
+- `Object`, `js/Object`, nil - are not anomalies
+
+=== Getting started
+
+==== Installation
+
+Add the following dependency in your project:
+
+.project.clj or build.boot
+[source,clojure]
+----
+[io.lazy-cat/tenet "0.1.20"]
+----
+
+.deps.edn or bb.edn
+[source,clojure]
+----
+io.lazy-cat/tenet {:mvn/version "0.1.20"}
+----
 
 === License
 
-Copyright © 2022 lazy-cat.io
+link:license[Copyright © 2022 lazy-cat.io]
