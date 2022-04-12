@@ -1,0 +1,8 @@
+.clj-kondo/.cache
+.cpcache
+.idea
+coverage
+out
+target
+build.edn
+*.iml
