@@ -9,7 +9,7 @@
  :homepage     "https://github.com/lazy-cat-io/tenet#readme"
  :repository   {:url "https://github.com/lazy-cat-io/tenet"}
  :bugs         {:url "https://github.com/lazy-cat-io/tenet/issues"}
- :keywords     [:clojure :clojurescript :unifier :data-flow]
+ :keywords     [:clojure :clojurescript :tenet :unifier :data-flow :response :unified-response]
 
  :build        {:src-dirs      ["src/main/clojure"]
                 :resource-dirs ["src/main/resources"]
@@ -17,6 +17,6 @@
                 :jar-file      "target/tenet.jar"
                 :scm           {:url #ref [:repository :url]}}
 
- :metadata     {:build/created-at        "{{ build/created-at }}"
-                :git/branch              "{{ git/branch }}"
-                :git/sha                 "{{ git/sha }}"}}
+ :metadata     {:build/created-at "{{ build/created-at }}"
+                :git/branch       "{{ git/branch }}"
+                :git/sha          "{{ git/sha }}"}}
