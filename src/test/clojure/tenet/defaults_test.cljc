@@ -10,12 +10,14 @@
   (testing "expected anomalies"
     (doseq [x [:error ::sut/error #?(:clj  (Exception. "boom!")
                                      :cljs (js/Error. "boom!"))]]
-      (is (true? (sut/anomaly? x)))))
+      (is (true? (sut/anomaly? x)))
+      (is (or (= x (sut/category x)) (= ::sut/error (sut/category x))))))
 
   (testing "expected non anomalies"
     (doseq [x [:not-error ::error 42 nil #?(:clj  (Object.)
                                             :cljs (js/Object.))]]
-      (is (false? (sut/anomaly? x))))))
+      (is (false? (sut/anomaly? x)))
+      (is (nil? (sut/category x))))))
 
 
 (def boom!
