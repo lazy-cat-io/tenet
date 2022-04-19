@@ -11,27 +11,28 @@
 ;; mutable registry
 
 (bench/quick-bench
-  (@t/*registry :incorrect))
+  (boolean (@t/*registry :incorrect))) ; => true
 
 
-;; Evaluation count : 17869662 in 6 samples of 2978277 calls.
-;; Execution time mean : 19.466572 ns
-;; Execution time std-deviation : 0.724125 ns
-;; Execution time lower quantile : 18.748280 ns ( 2.5%)
-;; Execution time upper quantile : 20.571278 ns (97.5%)
-;; Overhead used : 14.614236 ns
+;; Evaluation count : 16074012 in 6 samples of 2679002 calls.
+;; Execution time mean : 26.506240 ns
+;; Execution time std-deviation : 0.179964 ns
+;; Execution time lower quantile : 26.280572 ns ( 2.5%)
+;; Execution time upper quantile : 26.690284 ns (97.5%)
+;; Overhead used : 10.861229 ns
+
 
 
 (bench/quick-bench
-  (contains? @t/*registry :incorrect))
+  (contains? @t/*registry :incorrect)) ; => true
 
 
-;; Evaluation count : 7036314 in 6 samples of 1172719 calls.
-;; Execution time mean : 70.796702 ns
-;; Execution time std-deviation : 1.314323 ns
-;; Execution time lower quantile : 69.141025 ns ( 2.5%)
-;; Execution time upper quantile : 72.440566 ns (97.5%)
-;; Overhead used : 14.614236 ns
+;; Evaluation count : 7680864 in 6 samples of 1280144 calls.
+;; Execution time mean : 68.363034 ns
+;; Execution time std-deviation : 1.508964 ns
+;; Execution time lower quantile : 66.602688 ns ( 2.5%)
+;; Execution time upper quantile : 70.146706 ns (97.5%)
+;; Overhead used : 10.861229 ns
 
 
 
@@ -41,27 +42,28 @@
 
 
 (bench/quick-bench
-  (registry :incorrect))
+  (boolean (registry :incorrect))) ; => true
 
 
-;; Evaluation count : 20078850 in 6 samples of 3346475 calls.
-;; Execution time mean : 16.244425 ns
-;; Execution time std-deviation : 1.570610 ns
-;; Execution time lower quantile : 15.070701 ns ( 2.5%)
-;; Execution time upper quantile : 18.713821 ns (97.5%)
-;; Overhead used : 14.614236 ns
+;; Evaluation count : 17192136 in 6 samples of 2865356 calls.
+;; Execution time mean : 24.180595 ns
+;; Execution time std-deviation : 0.127716 ns
+;; Execution time lower quantile : 23.947322 ns ( 2.5%)
+;; Execution time upper quantile : 24.275938 ns (97.5%)
+;; Overhead used : 10.861229 ns
+
 
 
 (bench/quick-bench
-  (contains? registry :not-error))
+  (contains? registry :not-error)) ; => false
 
 
-;; Evaluation count : 8133048 in 6 samples of 1355508 calls.
-;; Execution time mean : 62.208276 ns
-;; Execution time std-deviation : 2.064624 ns
-;; Execution time lower quantile : 59.855678 ns ( 2.5%)
-;; Execution time upper quantile : 64.898865 ns (97.5%)
-;; Overhead used : 14.614236 ns
+;; Evaluation count : 8007564 in 6 samples of 1334594 calls.
+;; Execution time mean : 64.311789 ns
+;; Execution time std-deviation : 0.963703 ns
+;; Execution time lower quantile : 63.063635 ns ( 2.5%)
+;; Execution time upper quantile : 65.456035 ns (97.5%)
+;; Overhead used : 10.861229 ns
 
 
 
@@ -69,31 +71,55 @@
 ;; Hierarchy
 ;;
 
+(bench/quick-bench
+  (isa? ::error ::error)) ; => true
+
+
+;; Evaluation count : 34328940 in 6 samples of 5721490 calls.
+;; Execution time mean : 6.613871 ns
+;; Execution time std-deviation : 0.021800 ns
+;; Execution time lower quantile : 6.574481 ns ( 2.5%)
+;; Execution time upper quantile : 6.629458 ns (97.5%)
+;; Overhead used : 10.861229 ns
+
+
+
 (derive ::incorrect ::error)
 
-(isa? ::incorrect ::error) ; => true
 
 (bench/quick-bench
-  (isa? ::incorrect ::error))
+  (isa? ::incorrect ::error)) ; => true
 
 
-;; Evaluation count : 3655722 in 6 samples of 609287 calls.
-;; Execution time mean : 154.388610 ns
-;; Execution time std-deviation : 6.430730 ns
-;; Execution time lower quantile : 146.875702 ns ( 2.5%)
-;; Execution time upper quantile : 162.042765 ns (97.5%)
-;; Overhead used : 14.614236 ns
+;; Evaluation count : 3712800 in 6 samples of 618800 calls.
+;; Execution time mean : 155.358881 ns
+;; Execution time std-deviation : 9.439643 ns
+;; Execution time lower quantile : 150.259546 ns ( 2.5%)
+;; Execution time upper quantile : 171.730946 ns (97.5%)
+;; Overhead used : 10.861229 ns
 
 
-(isa? ::not-error ::error) ; => false
 
 (bench/quick-bench
-  (isa? ::not-error ::error))
+  (isa? ::not-error ::error)) ; => false
 
 
-;; Evaluation count : 4494510 in 6 samples of 749085 calls.
-;; Execution time mean : 124.228944 ns
-;; Execution time std-deviation : 4.392843 ns
-;; Execution time lower quantile : 120.472880 ns ( 2.5%)
-;; Execution time upper quantile : 131.339545 ns (97.5%)
-;; Overhead used : 14.614236 ns
+;; Evaluation count : 4430190 in 6 samples of 738365 calls.
+;; Execution time mean : 124.754985 ns
+;; Execution time std-deviation : 0.223896 ns
+;; Execution time lower quantile : 124.469531 ns ( 2.5%)
+;; Execution time upper quantile : 124.999517 ns (97.5%)
+;; Overhead used : 10.861229 ns
+
+
+
+(bench/quick-bench
+  (= ::t/error ::t/error)) ; => true
+
+
+;; Evaluation count : 40770312 in 6 samples of 6795052 calls.
+;; Execution time mean : 3.891860 ns
+;; Execution time std-deviation : 0.015025 ns
+;; Execution time lower quantile : 3.876825 ns ( 2.5%)
+;; Execution time upper quantile : 3.908882 ns (97.5%)
+;; Overhead used : 10.861229 ns
