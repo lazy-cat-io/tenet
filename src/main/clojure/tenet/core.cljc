@@ -16,18 +16,16 @@
 (defonce ^{:doc "Registry of anomalies."}
   *registry
   (atom
-    #{:error
-      :exception
-      :unavailable
-      :interrupted
-      :incorrect
-      :unauthorized
-      :forbidden
-      :not-found
-      :unsupported
+    #{:busy
       :conflict
-      :busy}))
-
+      :error
+      :forbidden
+      :incorrect
+      :interrupted
+      :not-found
+      :unauthorized
+      :unavailable
+      :unsupported}))
 
 
 #?(:clj
