@@ -10,7 +10,9 @@
 
 
 (defprotocol IAnomaly
-  (anomaly? [this] "Returns `true` if the given value is an anomaly. Otherwise, `false`."))
+  "Anomaly protocol."
+  (anomaly? [this] "Returns `true` if it is an anomaly. Otherwise, `false`.")
+  (category [this] "Returns the anomaly category."))
 
 
 (defonce ^{:doc "Registry of anomalies."}
