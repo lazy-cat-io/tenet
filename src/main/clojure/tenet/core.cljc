@@ -12,8 +12,7 @@
 (defprotocol IAnomaly
   "Anomaly protocol."
   :extend-via-metadata true
-  (anomaly? [this] "Returns `true` if it is an anomaly. Otherwise, `false`.")
-  (category [this] "Returns the anomaly category."))
+  (anomaly? [this] "Returns `true` if it is an anomaly. Otherwise, `false`."))
 
 
 (defonce ^{:doc "Registry of anomalies."}
