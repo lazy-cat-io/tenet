@@ -1,7 +1,9 @@
 .clj-kondo/.cache
+.cljs_node_repl
 .cpcache
 .idea
 coverage
+node_modules
 out
 target
 build.edn
