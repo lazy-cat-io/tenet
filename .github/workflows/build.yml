@@ -97,6 +97,13 @@ jobs:
       - name: Run tests
         run: bb test
 
+      - name: Upload coverage
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/codecov.json
+          verbose: true
+
 
   build:
     runs-on: ubuntu-latest
