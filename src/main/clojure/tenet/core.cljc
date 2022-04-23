@@ -59,6 +59,12 @@
   (as-response [this type] "Returns a response using the given response type."))
 
 
+(defprotocol IResponse
+  "Response protocol."
+  :extend-via-metadata true
+  (response? [this] "Returns `true` if it is a response. Otherwise, `false`."))
+
+
 
 ;;
 ;; Anomalies
@@ -125,6 +131,9 @@
        (as-response [_ new-type]
          (Response. new-type data _meta))
 
+       IResponse
+       (response? [_] true)
+
        IAnomaly
        (anomaly? [_]
          (anomaly? type))
@@ -178,7 +187,7 @@
 
        IPersistentCollection
        (equiv [_ other]
-         (and (instance? Response other)
+         (and (response? other)
               (= type (:type other))
               (= data (:data other))
               (= _meta (meta other))))
@@ -187,7 +196,7 @@
        (toString [_]
          (str "[" type " " data "]"))
        (equals [_ other]
-         (and (instance? Response other)
+         (and (response? other)
               (= type (:type other))
               (= data (:data other))))
        (hashCode [_]
@@ -207,6 +216,9 @@
      IResponseBuilder
      (as-response [_ new-type]
        (Response. new-type data _meta))
+
+     IResponse
+     (response? [_] true)
 
      IAnomaly
      (anomaly? [_]
@@ -263,7 +275,7 @@
 
      IEquiv
      (-equiv [_ other]
-       (and (instance? Response other)
+       (and (response? other)
             (= type (:type other))
             (= data (:data other))
             (= _meta (meta other))))
@@ -277,23 +289,32 @@
        (-write writer (str "[" type " " data "]")))))
 
 
-(extend-protocol IResponseBuilder
-  nil
+(extend-type nil
+  IResponseBuilder
   (as-response [_ type]
-    (Response. type nil nil)))
+    (Response. type nil nil))
+
+  IResponse
+  (response? [_] false))
 
 
 #?(:clj
-   (extend-protocol IResponseBuilder
-     Object
+   (extend-type Object
+     IResponseBuilder
      (as-response [x type]
-       (Response. type x nil)))
+       (Response. type x nil))
+
+     IResponse
+     (response? [_] false))
 
    :cljs
-   (extend-protocol IResponseBuilder
-     default
+   (extend-type default
+     IResponseBuilder
      (as-response [x type]
-       (Response. type x nil))))
+       (Response. type x nil))
+
+     IResponse
+     (response? [_] false)))
 
 
 
