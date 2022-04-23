@@ -87,14 +87,23 @@
         (is (every? #(contains? actual %) [:type :data]))
         (is (= (sut/as-response expected-data expected-type) actual))
         (is (= #{actual} (into #{} [(sut/as-response expected-data expected-type) actual])))
-        (is (= "[:tenet.core-test/success {:a 42}]" (str expected) (str actual) (pr-str expected) (pr-str actual)))
+        (is (= "[:success nil]" (str (sut/as-success)) (str (sut/as-success nil))))
+        (is (= "[:success nil]" (str (with-meta (sut/as-success) {:foo :bar})) (str (with-meta (sut/as-success nil) {:foo :bar}))))
+        (is (= "#tenet [:success nil]" (pr-str (sut/as-success)) (pr-str (sut/as-success nil))))
+        (is (= "#tenet [:success nil]" (pr-str (with-meta (sut/as-success) {:foo :bar})) (pr-str (with-meta (sut/as-success nil) {:foo :bar}))))
+        (is (= "[:tenet.core-test/success {:a 42}]" (str expected) (str actual)))
+        (is (= "[:tenet.core-test/success {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:tenet.core-test/success {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
-            [(is (= (.hashCode expected)  (.hashCode actual)))
+            [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
-             (is (thrown? Exception (assoc actual ::bad-key 42)))
-             (is (thrown-with-msg? Exception #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
             :cljs
-            [(is (= (-hash expected)  (-hash actual)))])))
+            [(is (= (-hash expected) (-hash actual)))
+             (is (thrown-with-msg? js/Error #"Index out of bounds" (nth actual 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))])))
 
 
     (testing "destructuring as map"
@@ -116,14 +125,23 @@
         (is (every? #(contains? actual %) [:type :data]))
         (is (= (sut/as-response expected-data expected-type) actual))
         (is (= #{actual} (into #{} [(sut/as-response expected-data expected-type) actual])))
-        (is (= "[:tenet.core-test/success {:a 42}]" (str expected) (str actual) (pr-str expected) (pr-str actual)))
+        (is (= "[:success nil]" (str (sut/as-success)) (str (sut/as-success nil))))
+        (is (= "[:success nil]" (str (with-meta (sut/as-success) {:foo :bar})) (str (with-meta (sut/as-success nil) {:foo :bar}))))
+        (is (= "#tenet [:success nil]" (pr-str (sut/as-success)) (pr-str (sut/as-success nil))))
+        (is (= "#tenet [:success nil]" (pr-str (with-meta (sut/as-success) {:foo :bar})) (pr-str (with-meta (sut/as-success nil) {:foo :bar}))))
+        (is (= "[:tenet.core-test/success {:a 42}]" (str expected) (str actual)))
+        (is (= "[:tenet.core-test/success {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:tenet.core-test/success {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
-            [(is (= (.hashCode expected)  (.hashCode actual)))
+            [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
-             (is (thrown? Exception (assoc actual ::bad-key 42)))
-             (is (thrown-with-msg? Exception #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
             :cljs
-            [(is (= (-hash expected)  (-hash actual)))]))))
+            [(is (= (-hash expected) (-hash actual)))
+             (is (thrown-with-msg? js/Error #"Index out of bounds" (nth actual 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]))))
 
 
 
@@ -147,14 +165,23 @@
         (is (every? #(contains? actual %) [:type :data]))
         (is (= (sut/as-response expected-data expected-type) actual))
         (is (= #{actual} (into #{} [(sut/as-response expected-data expected-type) actual])))
-        (is (= "[:incorrect {:a 42}]" (str expected) (str actual) (pr-str expected) (pr-str actual)))
+        (is (= "[:incorrect nil]" (str (sut/as-incorrect)) (str (sut/as-incorrect nil))))
+        (is (= "[:incorrect nil]" (str (with-meta (sut/as-incorrect) {:foo :bar})) (str (with-meta (sut/as-incorrect nil) {:foo :bar}))))
+        (is (= "#tenet [:incorrect nil]" (pr-str (sut/as-incorrect)) (pr-str (sut/as-incorrect nil))))
+        (is (= "#tenet [:incorrect nil]" (pr-str (with-meta (sut/as-incorrect) {:foo :bar})) (pr-str (with-meta (sut/as-incorrect nil) {:foo :bar}))))
+        (is (= "[:incorrect {:a 42}]" (str expected) (str actual)))
+        (is (= "[:incorrect {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:incorrect {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
-            [(is (= (.hashCode expected)  (.hashCode actual)))
+            [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
-             (is (thrown? Exception (assoc actual ::bad-key 42)))
-             (is (thrown-with-msg? Exception #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
             :cljs
-            [(is (= (-hash expected)  (-hash actual)))])))
+            [(is (= (-hash expected) (-hash actual)))
+             (is (thrown-with-msg? js/Error #"Index out of bounds" (nth actual 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))])))
 
 
     (testing "destructuring as map"
@@ -176,14 +203,23 @@
         (is (every? #(contains? actual %) [:type :data]))
         (is (= (sut/as-response expected-data expected-type) actual))
         (is (= #{actual} (into #{} [(sut/as-response expected-data expected-type) actual])))
-        (is (= "[:incorrect {:a 42}]" (str expected) (str actual) (pr-str expected) (pr-str actual)))
+        (is (= "[:incorrect nil]" (str (sut/as-incorrect)) (str (sut/as-incorrect nil))))
+        (is (= "[:incorrect nil]" (str (with-meta (sut/as-incorrect) {:foo :bar})) (str (with-meta (sut/as-incorrect nil) {:foo :bar}))))
+        (is (= "#tenet [:incorrect nil]" (pr-str (sut/as-incorrect)) (pr-str (sut/as-incorrect nil))))
+        (is (= "#tenet [:incorrect nil]" (pr-str (with-meta (sut/as-incorrect) {:foo :bar})) (pr-str (with-meta (sut/as-incorrect nil) {:foo :bar}))))
+        (is (= "[:incorrect {:a 42}]" (str expected) (str actual)))
+        (is (= "[:incorrect {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:incorrect {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
-            [(is (= (.hashCode expected)  (.hashCode actual)))
+            [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
-             (is (thrown? Exception (assoc actual ::bad-key 42)))
-             (is (thrown-with-msg? Exception #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
             :cljs
-            [(is (= (-hash expected)  (-hash actual)))]))))
+            [(is (= (-hash expected) (-hash actual)))
+             (is (thrown-with-msg? js/Error #"Index out of bounds" (nth actual 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]))))
 
 
 
@@ -208,14 +244,23 @@
         (is (every? #(contains? actual %) [:type :data]))
         (is (= (sut/as-response expected-data expected-type) actual))
         (is (= #{actual} (into #{} [(sut/as-response expected-data expected-type) actual])))
-        (is (= "[:tenet.core-test/error {:a 42}]" (str expected) (str actual) (pr-str expected) (pr-str actual)))
+        (is (= "[:error nil]" (str (sut/as-error)) (str (sut/as-error nil))))
+        (is (= "[:error nil]" (str (with-meta (sut/as-error) {:foo :bar})) (str (with-meta (sut/as-error nil) {:foo :bar}))))
+        (is (= "#tenet [:error nil]" (pr-str (sut/as-error)) (pr-str (sut/as-error nil))))
+        (is (= "#tenet [:error nil]" (pr-str (with-meta (sut/as-error) {:foo :bar})) (pr-str (with-meta (sut/as-error nil) {:foo :bar}))))
+        (is (= "[:tenet.core-test/error {:a 42}]" (str expected) (str actual)))
+        (is (= "[:tenet.core-test/error {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:tenet.core-test/error {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
             [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
-             (is (thrown? Exception (assoc actual ::bad-key 42)))
-             (is (thrown-with-msg? Exception #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
             :cljs
-            [(is (= (-hash expected) (-hash actual)))])))
+            [(is (= (-hash expected) (-hash actual)))
+             (is (thrown-with-msg? js/Error #"Index out of bounds" (nth actual 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `nil`" (assoc actual nil 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))])))
 
 
     (testing "destructuring as map"
@@ -237,14 +282,21 @@
         (is (every? #(contains? actual %) [:type :data]))
         (is (= (sut/as-response expected-data expected-type) actual))
         (is (= #{actual} (into #{} [(sut/as-response expected-data expected-type) actual])))
-        (is (= "[:tenet.core-test/error {:a 42}]" (str expected) (str actual) (pr-str expected) (pr-str actual)))
+        (is (= "[:error nil]" (str (sut/as-error)) (str (sut/as-error nil))))
+        (is (= "[:error nil]" (str (with-meta (sut/as-error) {:foo :bar})) (str (with-meta (sut/as-error nil) {:foo :bar}))))
+        (is (= "#tenet [:error nil]" (pr-str (sut/as-error)) (pr-str (sut/as-error nil))))
+        (is (= "#tenet [:error nil]" (pr-str (with-meta (sut/as-error) {:foo :bar})) (pr-str (with-meta (sut/as-error nil) {:foo :bar}))))
+        (is (= "[:tenet.core-test/error {:a 42}]" (str expected) (str actual)))
+        (is (= "[:tenet.core-test/error {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:tenet.core-test/error {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
             [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
-             (is (thrown? Exception (assoc actual ::bad-key 42)))
-             (is (thrown-with-msg? Exception #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
             :cljs
-            [(is (= (-hash expected) (-hash actual)))])))
+            [(is (= (-hash expected) (-hash actual)))
+             (is (thrown-with-msg? js/Error #"Index out of bounds" (nth actual 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))])))
     (underive ::error ::sut/error)))
 
 
