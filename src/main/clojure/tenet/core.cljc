@@ -179,7 +179,7 @@
          (case key
            (:type 0) (Response. new-value data _meta)
            (:data 1) (Response. type new-value _meta)
-           (throw (Exception. (format "Response has no field for key - `%s`" key)))))
+           (throw (IllegalArgumentException. ^String (cl-format nil "Response has no field for key - `~s`" key)))))
 
        Map$Entry
        (getKey [_] type)
@@ -194,7 +194,7 @@
 
        Object
        (toString [_]
-         (str "[" type " " data "]"))
+         (cl-format nil "[~s ~s]" type data))
        (equals [_ other]
          (and (response? other)
               (= type (:type other))
@@ -203,10 +203,10 @@
          (.hashCode [type data])))
 
      (defmethod print-method Response [response ^Writer writer]
-       (.write writer (str "[" (:type response) " " (:data response) "]")))
+       (.write writer (str "#tenet " response)))
 
      (defmethod print-dup Response [response ^Writer writer]
-       (.write writer (str "[" (:type response) " " (:data response) "]"))))
+       (.write writer (str "#tenet " response))))
 
 
    :cljs
@@ -263,7 +263,7 @@
        (case key
          (:type 0) (Response. new-value data _meta)
          (:data 1) (Response. type new-value _meta)
-         (throw (js/Error. (str "Response has no field for key - " key)))))
+         (throw (js/Error. (cl-format nil "Response has no field for key - `~s`" key)))))
 
      IMapEntry
      (-key [_] type)
@@ -271,7 +271,7 @@
 
      Object
      (toString [_]
-       (str "[" type " " data "]"))
+       (cl-format nil "[~s ~s]" type data))
 
      IEquiv
      (-equiv [_ other]
@@ -285,8 +285,8 @@
        (-hash [type data]))
 
      IPrintWithWriter
-     (-pr-writer [_o writer _opts]
-       (-write writer (str "[" type " " data "]")))))
+     (-pr-writer [response writer _opts]
+       (-write writer (str "#tenet " response)))))
 
 
 (extend-type nil
