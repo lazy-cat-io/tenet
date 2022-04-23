@@ -36,6 +36,7 @@
      :cljs gstr/format))
 
 
+;; TODO: [2022-04-23, ilshat@sultanov.team] Need to check working or not with GraalVM?
 (def cl-format
   "An implementation of a Common Lisp compatible format function."
   pprint/cl-format)
