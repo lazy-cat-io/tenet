@@ -307,11 +307,13 @@
     (let [opts {:readers {'tenet sut/vec->response}}]
       (is (= (sut/as-response 42 :created)
              (parse opts (pr-str (sut/as-response 42 :created)))
-             (parse opts "#tenet [:created 42]")))
+             (parse opts "#tenet [:created 42]")
+             (parse opts "#tenet[:created 42]")))
 
       (is (= (sut/as-busy 42)
              (parse opts (pr-str (sut/as-busy 42)))
-             (parse opts "#tenet [:busy 42]")))))
+             (parse opts "#tenet [:busy 42]")
+             (parse opts "#tenet[:busy 42]")))))
 
 
 
