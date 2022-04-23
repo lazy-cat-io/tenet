@@ -46,7 +46,6 @@
 ;; Protocols
 ;;
 
-
 (defprotocol IAnomaly
   "Anomaly protocol."
   :extend-via-metadata true
@@ -287,6 +286,16 @@
      IPrintWithWriter
      (-pr-writer [response writer _opts]
        (-write writer (str "#tenet " response)))))
+
+
+(defn vec->response
+  [[type data :as coll]]
+  (with-meta (as-response data type) (meta coll)))
+
+
+(defn map->response
+  [{:keys [type data] :as map}]
+  (with-meta (as-response data type) (meta map)))
 
 
 (extend-type nil

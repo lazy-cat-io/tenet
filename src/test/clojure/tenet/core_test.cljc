@@ -1,7 +1,9 @@
 (ns tenet.core-test
   (:require
-    #?@(:clj  [[clojure.test :refer [deftest testing is]]]
-        :cljs [[cljs.test :refer [deftest testing is]]])
+    #?@(:clj  [[clojure.test :refer [deftest testing is]]
+               [clojure.edn :refer [read-string] :rename {read-string parse}]]
+        :cljs [[cljs.test :refer [deftest testing is]]
+               [cljs.reader :refer [read-string] :rename {read-string parse}]])
     [tenet.core :as sut]))
 
 
@@ -297,7 +299,19 @@
             [(is (= (-hash expected) (-hash actual)))
              (is (thrown-with-msg? js/Error #"Index out of bounds" (nth actual 42)))
              (is (thrown-with-msg? js/Error #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))])))
-    (underive ::error ::sut/error)))
+    (underive ::error ::sut/error))
+
+
+
+  (testing "parse response from string"
+    (let [opts {:readers {'tenet sut/vec->response}}]
+      (is (= (sut/as-response 42 :created)
+             (parse opts (pr-str (sut/as-response 42 :created)))
+             (parse opts "#tenet [:created 42]")))
+
+      (is (= (sut/as-busy 42)
+             (parse opts (pr-str (sut/as-busy 42)))
+             (parse opts "#tenet [:busy 42]"))))))
 
 
 
