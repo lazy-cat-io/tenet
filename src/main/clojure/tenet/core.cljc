@@ -1,8 +1,9 @@
 (ns tenet.core
-  (:refer-clojure :exclude [type -> ->>])
+  (:refer-clojure :exclude [format type -> ->>])
   #?@(:clj
       [(:require
-         [clojure.core :as c])
+         [clojure.core :as c]
+         [clojure.pprint :as pprint])
        (:import
          (clojure.lang
            Associative
@@ -17,8 +18,28 @@
          (java.util
            Map$Entry))]
       :cljs
-      [(:require-macros
+      [(:require
+         [cljs.pprint :as pprint]
+         [goog.string :as gstr]
+         [goog.string.format])
+       (:require-macros
          [tenet.core])]))
+
+
+;;
+;; Helper functions
+;;
+
+(def format
+  "Formats a string."
+  #?(:clj  c/format
+     :cljs gstr/format))
+
+
+(def cl-format
+  "An implementation of a Common Lisp compatible format function."
+  pprint/cl-format)
+
 
 
 ;;
