@@ -311,7 +311,19 @@
 
       (is (= (sut/as-busy 42)
              (parse opts (pr-str (sut/as-busy 42)))
-             (parse opts "#tenet [:busy 42]"))))))
+             (parse opts "#tenet [:busy 42]")))))
+
+
+
+  (testing "convert vector to response"
+    (is (= (sut/as-created 42) (sut/vec->response [:created 42])))
+    (is (= (sut/as-busy 42) (sut/vec->response [:busy 42]))))
+
+
+
+  (testing "convert map to response"
+    (is (= (sut/as-created 42) (sut/map->response {:type :created, :data 42})))
+    (is (= (sut/as-busy 42) (sut/map->response {:type :busy, :data 42})))))
 
 
 
