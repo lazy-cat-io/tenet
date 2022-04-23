@@ -55,6 +55,18 @@
 
 
 (deftest response-test
+  (testing "response?"
+    (testing "expected non responses"
+      (doseq [x [nil "foo" :foo 42 #?(:clj (Object.) :cljs (js/Object.)) #?(:clj (Exception. "boom!") :cljs (js/Error. "boom!"))]]
+        (is (false? (sut/response? x)))))
+
+
+    (testing "expected responses"
+      (doseq [x [(sut/as-error) (sut/as-success)]]
+        (is (true? (sut/response? x))))))
+
+
+
   (testing "success response"
     (testing "destructuring as collection"
       (let [expected-type ::success
