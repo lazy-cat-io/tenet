@@ -294,10 +294,12 @@
         #?@(:clj
             [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
+             (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `nil`" (assoc actual nil 42)))
              (is (thrown-with-msg? IllegalArgumentException #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))]
             :cljs
             [(is (= (-hash expected) (-hash actual)))
              (is (thrown-with-msg? js/Error #"Index out of bounds" (nth actual 42)))
+             (is (thrown-with-msg? js/Error #"Response has no field for key - `nil`" (assoc actual nil 42)))
              (is (thrown-with-msg? js/Error #"Response has no field for key - `:bad-key`" (assoc actual :bad-key 42)))])))
     (underive ::error ::sut/error))
 
