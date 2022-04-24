@@ -391,4 +391,8 @@
 
     (is (= false (sut/anomaly? (sut/as-success)) (sut/anomaly? (sut/as-success 42))))
     (is (= (sut/as-response nil :success) (sut/as-success)))
-    (is (= (sut/as-response 42 :success) (sut/as-success 42)))))
+    (is (= (sut/as-response 42 :success) (sut/as-success 42)))
+
+    (is (= false (sut/anomaly? (sut/as-updated)) (sut/anomaly? (sut/as-updated 42))))
+    (is (= (sut/as-response nil :updated) (sut/as-updated)))
+    (is (= (sut/as-response 42 :updated) (sut/as-updated 42)))))

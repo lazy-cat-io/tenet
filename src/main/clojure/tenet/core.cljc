@@ -450,3 +450,8 @@
 (defn as-success
   ([] (as-response nil :success))
   ([x] (as-response x :success)))
+
+
+(defn as-updated
+  ([] (as-response nil :updated))
+  ([x] (as-response x :updated)))
