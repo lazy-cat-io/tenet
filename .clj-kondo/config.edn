@@ -4,7 +4,8 @@
 
  :config-paths []
 
- :lint-as      {}
+ :lint-as      {tenet.core/->  clojure.core/->
+                tenet.core/->> clojure.core/->>}
 
  :linters      {:consistent-alias
                 {:aliases {clojure.java.shell shell
