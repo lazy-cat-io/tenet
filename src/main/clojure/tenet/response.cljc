@@ -1,4 +1,4 @@
-(ns tenet.core
+(ns tenet.response
   (:refer-clojure :exclude [format type -> ->>])
   #?@(:clj
       [(:require
@@ -23,7 +23,7 @@
          [goog.string :as gstr]
          [goog.string.format])
        (:require-macros
-         [tenet.core])]))
+         [tenet.response])]))
 
 
 ;;
