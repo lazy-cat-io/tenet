@@ -18,7 +18,7 @@
                                            "--middleware" "[cider.piggieback/wrap-cljs-repl]"]}
 
            :test             {:extra-paths ["src/test/clojure" "src/test/resources"]
-                              :extra-deps  {lambdaisland/kaocha           {:mvn/version "1.65.1029"}
+                              :extra-deps  {lambdaisland/kaocha           {:mvn/version "1.66.1034"}
                                             lambdaisland/kaocha-cloverage {:mvn/version "1.0.75"}
                                             com.lambdaisland/kaocha-cljs  {:mvn/version "1.2.123"}}
                               :main-opts   ["--main" "kaocha.runner"]}
