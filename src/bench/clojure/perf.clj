@@ -1,7 +1,7 @@
 (ns perf
   (:require
     [criterium.core :as bench]
-    [tenet.core :as t]))
+    [tenet.response :as r]))
 
 
 ;;
@@ -11,7 +11,7 @@
 ;; mutable registry
 
 (bench/quick-bench
-  (boolean (@t/*registry :incorrect))) ; => true
+  (boolean (@r/*registry :incorrect))) ; => true
 
 
 ;; Evaluation count : 16074012 in 6 samples of 2679002 calls.
@@ -24,7 +24,7 @@
 
 
 (bench/quick-bench
-  (contains? @t/*registry :incorrect)) ; => true
+  (contains? @r/*registry :incorrect)) ; => true
 
 
 ;; Evaluation count : 7680864 in 6 samples of 1280144 calls.
@@ -38,7 +38,7 @@
 
 ;; cached registry
 
-(def registry @t/*registry)
+(def registry @r/*registry)
 
 
 (bench/quick-bench
@@ -114,7 +114,7 @@
 
 
 (bench/quick-bench
-  (= ::t/error ::t/error)) ; => true
+  (= ::r/error ::r/error)) ; => true
 
 
 ;; Evaluation count : 40770312 in 6 samples of 6795052 calls.

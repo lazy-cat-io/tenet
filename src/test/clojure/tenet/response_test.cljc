@@ -1,10 +1,10 @@
-(ns tenet.core-test
+(ns tenet.response-test
   (:require
     #?@(:clj  [[clojure.test :refer [deftest testing is]]
                [clojure.edn :refer [read-string] :rename {read-string parse}]]
         :cljs [[cljs.test :refer [deftest testing is]]
                [cljs.reader :refer [read-string] :rename {read-string parse}]])
-    [tenet.core :as sut]))
+    [tenet.response :as sut]))
 
 
 (deftest anomalies-test
@@ -93,9 +93,9 @@
         (is (= "[:success nil]" (str (with-meta (sut/as-success) {:foo :bar})) (str (with-meta (sut/as-success nil) {:foo :bar}))))
         (is (= "#tenet [:success nil]" (pr-str (sut/as-success)) (pr-str (sut/as-success nil))))
         (is (= "#tenet [:success nil]" (pr-str (with-meta (sut/as-success) {:foo :bar})) (pr-str (with-meta (sut/as-success nil) {:foo :bar}))))
-        (is (= "[:tenet.core-test/success {:a 42}]" (str expected) (str actual)))
-        (is (= "[:tenet.core-test/success {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
-        (is (= "#tenet [:tenet.core-test/success {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
+        (is (= "[:tenet.response-test/success {:a 42}]" (str expected) (str actual)))
+        (is (= "[:tenet.response-test/success {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:tenet.response-test/success {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
             [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
@@ -131,9 +131,9 @@
         (is (= "[:success nil]" (str (with-meta (sut/as-success) {:foo :bar})) (str (with-meta (sut/as-success nil) {:foo :bar}))))
         (is (= "#tenet [:success nil]" (pr-str (sut/as-success)) (pr-str (sut/as-success nil))))
         (is (= "#tenet [:success nil]" (pr-str (with-meta (sut/as-success) {:foo :bar})) (pr-str (with-meta (sut/as-success nil) {:foo :bar}))))
-        (is (= "[:tenet.core-test/success {:a 42}]" (str expected) (str actual)))
-        (is (= "[:tenet.core-test/success {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
-        (is (= "#tenet [:tenet.core-test/success {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
+        (is (= "[:tenet.response-test/success {:a 42}]" (str expected) (str actual)))
+        (is (= "[:tenet.response-test/success {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:tenet.response-test/success {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
             [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
@@ -250,9 +250,9 @@
         (is (= "[:error nil]" (str (with-meta (sut/as-error) {:foo :bar})) (str (with-meta (sut/as-error nil) {:foo :bar}))))
         (is (= "#tenet [:error nil]" (pr-str (sut/as-error)) (pr-str (sut/as-error nil))))
         (is (= "#tenet [:error nil]" (pr-str (with-meta (sut/as-error) {:foo :bar})) (pr-str (with-meta (sut/as-error nil) {:foo :bar}))))
-        (is (= "[:tenet.core-test/error {:a 42}]" (str expected) (str actual)))
-        (is (= "[:tenet.core-test/error {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
-        (is (= "#tenet [:tenet.core-test/error {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
+        (is (= "[:tenet.response-test/error {:a 42}]" (str expected) (str actual)))
+        (is (= "[:tenet.response-test/error {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:tenet.response-test/error {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
             [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
@@ -288,9 +288,9 @@
         (is (= "[:error nil]" (str (with-meta (sut/as-error) {:foo :bar})) (str (with-meta (sut/as-error nil) {:foo :bar}))))
         (is (= "#tenet [:error nil]" (pr-str (sut/as-error)) (pr-str (sut/as-error nil))))
         (is (= "#tenet [:error nil]" (pr-str (with-meta (sut/as-error) {:foo :bar})) (pr-str (with-meta (sut/as-error nil) {:foo :bar}))))
-        (is (= "[:tenet.core-test/error {:a 42}]" (str expected) (str actual)))
-        (is (= "[:tenet.core-test/error {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
-        (is (= "#tenet [:tenet.core-test/error {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
+        (is (= "[:tenet.response-test/error {:a 42}]" (str expected) (str actual)))
+        (is (= "[:tenet.response-test/error {:a 42}]" (str (with-meta expected {:foo :bar})) (str (with-meta actual {:foo :bar}))))
+        (is (= "#tenet [:tenet.response-test/error {:a 42}]" (pr-str actual) (pr-str (with-meta actual {:foo :bar}))))
         #?@(:clj
             [(is (= (.hashCode expected) (.hashCode actual)))
              (is (thrown? IndexOutOfBoundsException (nth actual 42)))
