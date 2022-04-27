@@ -1,1 +1,1 @@
-{tenet tenet.core/vec->response}
+{tenet tenet.response/vec->response}
