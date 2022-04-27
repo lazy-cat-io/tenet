@@ -8,6 +8,7 @@
          (clojure.lang
            Associative
            Counted
+           IDeref
            ILookup
            Indexed
            IObj
@@ -143,6 +144,9 @@
        (withMeta [_ new-meta]
          (Response. type data new-meta))
 
+       IDeref
+       (deref [_] data)
+
        Counted
        (count [_] 2)
 
@@ -230,6 +234,9 @@
      IWithMeta
      (-with-meta [_ new-meta]
        (Response. type data new-meta))
+
+     IDeref
+     (-deref [_] data)
 
      ICounted
      (-count [_] 2)
