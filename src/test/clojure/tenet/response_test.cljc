@@ -64,8 +64,9 @@
 
 
     (testing "expected responses"
-      (doseq [x [(sut/as-error) (sut/as-success)]]
-        (is (true? (sut/response? x))))))
+      (doseq [x [(sut/as-error 42) (sut/as-success 42)]]
+        (is (true? (sut/response? x)))
+        (is (= 42 @x)))))
 
 
 
