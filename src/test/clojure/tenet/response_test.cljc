@@ -55,6 +55,20 @@
   (is (= (sut/as-incorrect 43) (sut/->> 42 inc sut/as-created sut/as-incorrect inc))))
 
 
+(deftest safe-test
+  (testing "without error handler"
+    (is (nil? (sut/safe (throw #?(:clj (Exception. "boom!") :cljs (js/Error. "boom!")))))))
+
+
+  (testing "with error handler"
+    (let [res (sut/safe (throw #?(:clj (Exception. "boom!") :cljs (js/Error. "boom!"))) #(sut/as-error (ex-message %)))
+          {:keys [type data]} res
+          [type2 data2] res]
+      (is (true? (sut/anomaly? res)))
+      (is (= :error type type2))
+      (is (= "boom!" @res data data2)))))
+
+
 
 (deftest response-test
   (testing "response?"
