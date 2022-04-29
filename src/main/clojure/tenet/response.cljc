@@ -321,6 +321,30 @@
 ;;
 
 #?(:clj
+   (defn cljs?
+     "Checks &env in macro and returns `true` if that cljs env. Otherwise `false`."
+     {:added "0.0.6"}
+     [env]
+     (boolean (:ns env))))
+
+
+;; TODO: add finally? [body handler finally]
+#?(:clj
+   (defmacro safe
+     "Extended version of try-catch."
+     {:added "0.0.6"}
+     ([body]
+      `(safe ~body nil))
+
+     ([body handler]
+      `(try
+         ~body
+         (catch ~(if-not (cljs? &env) 'Exception :default) error#
+           (when-some [handler# ~handler]
+             (handler# error#)))))))
+
+
+#?(:clj
    (defmacro ->
      "This macro is the same as `clojure.core/some->`, but the check is done
      using the predicate `anomaly?` of the `IAnomaly` protocol and
