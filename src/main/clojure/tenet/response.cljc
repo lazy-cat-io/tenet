@@ -7,7 +7,6 @@
        (:import
          (clojure.lang
            Associative
-           Counted
            IDeref
            ILookup
            Indexed
@@ -15,9 +14,7 @@
            IPersistentCollection
            Keyword)
          (java.io
-           Writer)
-         (java.util
-           Map$Entry))]
+           Writer))]
       :cljs
       [(:require
          [cljs.pprint :as pprint]
@@ -147,9 +144,6 @@
        IDeref
        (deref [_] data)
 
-       Counted
-       (count [_] 2)
-
        Indexed
        (nth [_ idx]
          (case idx
@@ -167,27 +161,18 @@
          (.valAt this key nil))
        (valAt [_ key not-found]
          (case key
-           (:type 0) type
-           (:data 1) data
+           :type type
+           :data data
            not-found))
 
        Associative
        (containsKey [_ key]
          (or (= :type key) (= :data key)))
-       (entryAt [_ key]
-         (case key
-           :type [:type type]
-           :data [:data data]
-           nil))
        (assoc [_ key new-value]
          (case key
-           (:type 0) (Response. new-value data _meta)
-           (:data 1) (Response. type new-value _meta)
+           :type (Response. new-value data _meta)
+           :data (Response. type new-value _meta)
            (throw (IllegalArgumentException. ^String (cl-format nil "Response has no field for key - `~s`" key)))))
-
-       Map$Entry
-       (getKey [_] type)
-       (getValue [_] data)
 
        IPersistentCollection
        (equiv [_ other]
@@ -195,6 +180,7 @@
               (= type (:type other))
               (= data (:data other))
               (= _meta (meta other))))
+       (count [_] 2)
 
        Object
        (toString [_]
@@ -258,23 +244,18 @@
        (-lookup this key nil))
      (-lookup [_ key not-found]
        (case key
-         (:type 0) type
-         (:data 1) data
+         :type type
+         :data data
          not-found))
 
      IAssociative
      (-contains-key? [_ key]
        (or (= :type key) (= :data key)))
-     ;; (-entry-at [_ key])
      (-assoc [_ key new-value]
        (case key
-         (:type 0) (Response. new-value data _meta)
-         (:data 1) (Response. type new-value _meta)
+         :type (Response. new-value data _meta)
+         :data (Response. type new-value _meta)
          (throw (js/Error. (cl-format nil "Response has no field for key - `~s`" key)))))
-
-     IMapEntry
-     (-key [_] type)
-     (-val [_] data)
 
      Object
      (toString [_]
