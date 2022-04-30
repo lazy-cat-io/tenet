@@ -2,6 +2,14 @@
 
 === Released
 
+==== v1.0.57 (2022-04-30)
+
+Public API is stable.
+
+===== Added
+
+- Some helper functions and macros
+
 ==== v0.1.20 (2022-04-13)
 
 The first official release
