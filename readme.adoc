@@ -2,14 +2,92 @@ image:https://img.shields.io/github/license/lazy-cat-io/tenet[license,link=licen
 image:https://img.shields.io/github/v/release/lazy-cat-io/tenet.svg[https://github.com/lazy-cat-io/tenet/releases]
 image:https://img.shields.io/clojars/v/io.lazy-cat/tenet.svg[clojars,link=https://clojars.org/io.lazy-cat/tenet]
 
-image:https://codecov.io/gh/lazy-cat-io/tenet/branch/master/graph/badge.svg?token=BGGNUI43Y2[https://codecov.io/gh/lazy-cat-io/tenet]
-image:https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml/badge.svg[https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml]
-image:https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml/badge.svg[https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml]
-
+image:https://codecov.io/gh/lazy-cat-io/tenet/branch/master/graph/badge.svg?token=BGGNUI43Y2[codecov,https://codecov.io/gh/lazy-cat-io/tenet]
+image:https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml/badge.svg[build,https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml]
+image:https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml/badge.svg[deploy,https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml]
 
 == tenet
 
 A Clojure(Script) library, which helps to create explicit and understandable results to unify and simplify the data flow.
+
+=== Rationale
+
+==== Problem statement
+
+Usually, when working in a team, it is necessary to agree beforehand on the type of results to be used.
+Someone uses maps, someone uses vectors, someone uses monads like `Either`, `Maybe`, etc.
+
+It is not always clear when a function returns data without some context (e.g. `nil`, `42`, etc).
+
+What does `nil` mean: No data?
+Didn't do anything?
+Did something go wrong?
+
+What does `42` mean: User id?
+Age?
+
+Such answers make you look at the current implementation and spend time understanding the current context.
+
+Imagine that we have a function containing some kind of business logic:
+
+[source,clojure]
+----
+(defn create-user! [user]
+  (if-not (valid? user)
+    ;; returns the response that the data is not valid
+    (if-not (exists? user)
+      ;; returns the response that the email is busy
+      (db/insert! user)))) ;; returns the response that the user was created or an error occurred while writing data to the database
+----
+
+In this case, there may be several possible responses:
+
+- the user data is not valid
+- the email is busy
+- an error occurred while writing data to the database
+- or finally, a response about a successful operation: e.g. user id or data
+
+There is a useful data type in the Clojure - a `keyword` that can be used to add some context to the response:
+
+- `:user/incorrect`, `:user/exists`
+- `:user/created` или `:org.acme.user/created`
+
+Having such an answer, it is immediately clear what exactly happened - we have the context and data.
+Most of the time we do not write code, we read it.
+And this is very important.
+
+We have decided on the context, but how to add it?
+Key-value in the map?
+Vector?
+Monad?
+Metadata?
+And how to understand which answer is considered an error (anomaly)?
+
+In our practice, We used all the above methods, it was not always something that was not convenient.
+
+What should be the structure of the map, vector?
+Create custom object/type and use getters and setters?
+This adds problems in further use and looks like OOP.
+Use metadata?
+Metadata cannot be added to some types of data.
+And what type of response is considered an error (anomaly)?
+
+==== Solution
+
+This library helps to unify responses and anomalies.
+Out of the box, there are general types of responses and all the necessary helper functions.
+
+In short, all the responses are a `Pair [type data]`.
+E.g. `[:org.acme.user/created {:user/id 42}]`.
+
+There are no requirements for the type of response and the type of data.
+Always the same data structure.
+
+We have a registry of basic anomalies to which you can add your own type, or you can use the global hierarchy using `derive` from the parent `:tenet.response/error`.
+The registry was added to increase the performance.
+Checking an anomaly in the registry takes ~15-25 ns, and checking using the global hierarchy takes ~120-150 ns.
+
+See the performance link:src/bench/clojure/perf.clj[tests].
 
 === Getting started
 
@@ -18,13 +96,155 @@ Add the following dependency in your project:
 .project.clj or build.boot
 [source,clojure]
 ----
-[io.lazy-cat/tenet "0.1.20"]
+[io.lazy-cat/tenet "0.1.42"]
 ----
 
 .deps.edn or bb.edn
 [source,clojure]
 ----
-io.lazy-cat/tenet {:mvn/version "0.1.20"}
+io.lazy-cat/tenet {:mvn/version "0.1.42"}
+----
+
+==== Basic API
+
+[source,clojure]
+----
+(ns example
+  (:require
+    [tenet.response :as r]))
+
+(r/anomaly? x)
+;; Exception and js/Error are anomalies
+;; Object, nil, default are not anomalies
+;; Other data types are anomalies if they are registered in the registry or inherited from `:tenet.response/error`
+
+(r/as-response x :your-response-type)
+----
+
+==== Anomaly registry
+
+[source,clojure]
+----
+:busy
+:conflict
+:error
+:forbidden
+:incorrect
+:interrupted
+:not-found
+:unauthorized
+:unavailable
+:unsupported
+----
+
+==== Response builders
+
+===== Error response builders
+
+[source,clojure]
+----
+(r/as-busy x)
+(r/as-conflict x)
+(r/as-error x)
+(r/as-forbidden x)
+(r/as-incorrect x)
+(r/as-interrupted x)
+(r/as-not-found x)
+(r/as-unauthorized x)
+(r/as-unavailable x)
+(r/as-unsupported x)
+----
+
+===== Success response builders
+
+[source,clojure]
+----
+;; success response builders
+(r/as-as-accepted x)
+(r/as-as-created x)
+(r/as-as-deleted x)
+(r/as-as-found x)
+(r/as-as-success x)
+(r/as-as-updated x)
+----
+
+==== Examples
+
+===== Basic API
+
+[source,clojure]
+----
+(r/as-not-found 42) ;; => #tenet [:not-found 42]
+
+(r/anomaly? (r/as-not-found 42)) ;; => true
+
+(r/anomaly? (r/as-created 42)) ;; => false
+
+(:type (r/as-created 42)) ;; => :created
+
+(:data (r/as-created 42)) ;; => 42
+
+@(r/as-created 42) ;; => 42
+
+(-> (r/as-created 42)
+    (with-meta {:foo :bar})
+    (meta)) ;; => {:foo :bar}
+----
+
+===== Destructuring
+
+[source,clojure]
+----
+(let [[type data] (r/as-not-found 42)]
+  {:type type, :data data}) ;; => {:type :not-found, :data 42}
+
+(let [{:keys [type data]} (r/as-not-found 42)]
+    {:type type, :data data}) ;; => {:type :not-found, :data 42}
+----
+
+===== Update response type
+
+[source,clojure]
+----
+(-> (r/as-not-found 42)
+    (r/as-incorrect)) ;; => #tenet [:incorrect 42]
+----
+
+===== Update response data
+
+[source,clojure]
+----
+(-> (r/as-not-found 42)
+    (r/as-incorrect)
+    (update :data inc)) ;; => #tenet [:incorrect 43]
+
+(-> (r/as-not-found {:foo {:bar 42}})
+    (r/as-incorrect)
+    (update-in [:data :foo :bar] inc)) ;; => #tenet [:incorrect {:foo {:bar 43}}]
+----
+
+==== Helper macros
+
+[source,clojure]
+----
+(def boom!
+  (constantly :error))
+
+;; just like `some->`, but checks for anomalies
+(r/-> 42 inc) ;; => 43
+(r/-> 42 inc boom!) ;; => :error
+(r/-> 42 inc boom! inc) ;; => :error
+
+
+;; just like `some->>`, but checks for anomalies
+(r/->> 42 inc) ;; => 43
+(r/->> 42 inc boom!) ;; => :error
+(r/->> 42 inc boom! inc) ;; => :error
+
+
+;; handle exceptions
+(r/safe (Exception. "boom!")) ;; => nil
+(r/safe (Exception. "boom!") #(r/as-error (ex-message %))) ;; => #tenet [:error "boom!"]
 ----
 
 === License
