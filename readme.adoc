@@ -36,14 +36,14 @@ Imagine that we have a function containing some kind of business logic:
   (if-not (valid? user)
     ;; returns the response that the data is not valid
     (if-not (exists? user)
-      ;; returns the response that the email is busy
+      ;; returns the response that the email is occupied
       (db/insert! user)))) ;; returns the response that the user was created or an error occurred while writing data to the database
 ----
 
 In this case, there may be several possible responses:
 
 - the user data is not valid
-- the email is busy
+- the email is occupied
 - an error occurred while writing data to the database
 - or finally, a response about a successful operation: e.g. user id or data
 
@@ -159,12 +159,12 @@ io.lazy-cat/tenet {:mvn/version "1.0.57"}
 
 [source,clojure]
 ----
-(r/as-as-accepted x)
-(r/as-as-created x)
-(r/as-as-deleted x)
-(r/as-as-found x)
-(r/as-as-success x)
-(r/as-as-updated x)
+(r/as-accepted x)
+(r/as-created x)
+(r/as-deleted x)
+(r/as-found x)
+(r/as-success x)
+(r/as-updated x)
 ----
 
 ==== Examples
