@@ -50,7 +50,7 @@ In this case, there may be several possible responses:
 There is a useful data type in the Clojure - a `keyword` that can be used to add some context to the response:
 
 - `:user/incorrect`, `:user/exists`
-- `:user/created` или `:org.acme.user/created`
+- `:user/created` or `:org.acme.user/created`
 
 Having such an answer, it is immediately clear what exactly happened - we have the context and data.
 Most of the time we do not write code, we read it.
@@ -159,7 +159,6 @@ io.lazy-cat/tenet {:mvn/version "1.0.57"}
 
 [source,clojure]
 ----
-;; success response builders
 (r/as-as-accepted x)
 (r/as-as-created x)
 (r/as-as-deleted x)
