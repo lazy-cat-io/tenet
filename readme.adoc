@@ -96,13 +96,13 @@ Add the following dependency in your project:
 .project.clj or build.boot
 [source,clojure]
 ----
-[io.lazy-cat/tenet "0.1.42"]
+[io.lazy-cat/tenet "1.0.57"]
 ----
 
 .deps.edn or bb.edn
 [source,clojure]
 ----
-io.lazy-cat/tenet {:mvn/version "0.1.42"}
+io.lazy-cat/tenet {:mvn/version "1.0.57"}
 ----
 
 ==== Basic API
