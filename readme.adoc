@@ -63,7 +63,7 @@ Monad?
 Metadata?
 And how to understand which answer is considered an error (anomaly)?
 
-In our practice, We used all the above methods, it was not always something that was not convenient.
+We used all the above methods in our practice, and it has always been something inconvenient.
 
 What should be the structure of the map, vector?
 Create custom object/type and use getters and setters?
