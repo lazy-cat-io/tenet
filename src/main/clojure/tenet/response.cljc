@@ -34,7 +34,6 @@
      :cljs gstr/format))
 
 
-;; TODO: [2022-04-23, ilshat@sultanov.team] Need to check working or not with GraalVM?
 (def cl-format
   "An implementation of a Common Lisp compatible format function."
   pprint/cl-format)
@@ -119,6 +118,8 @@
 ;;
 ;; Response
 ;;
+
+;; TODO: [2022-05-16, ilshat@sultanov.team] Doesn't work with babashka (sci) `deftype` is not supported
 
 #?(:clj
    (do
