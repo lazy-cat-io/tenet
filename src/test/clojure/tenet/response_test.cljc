@@ -358,6 +358,15 @@
 
 
 (deftest response-builders-test
+  (testing "common response builders"
+    (is (= true (sut/anomaly? (sut/as :error 42)) (sut/anomaly? (sut/as :error))))
+    (is (= false (sut/anomaly? (sut/as :success 42)) (sut/anomaly? (sut/as :success))))
+    (derive :org.acme.user/incorrect ::sut/error)
+    (is (= true (sut/anomaly? (sut/as :org.acme.user/incorrect 42)) (sut/anomaly? (sut/as :org.acme.user/incorrect))))
+    (is (= false (sut/anomaly? (sut/as :org.acme.user/created 42)) (sut/anomaly? (sut/as :org.acme.user/created))))
+    (underive :org.acme.user/incorrect ::sut/error))
+
+
   (testing "error response builders"
     (is (= true (sut/anomaly? (sut/as-busy)) (sut/anomaly? (sut/as-busy 42))))
     (is (= (sut/as-response nil :busy) (sut/as-busy)))

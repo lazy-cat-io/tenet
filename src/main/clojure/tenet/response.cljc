@@ -385,6 +385,15 @@
 ;; Response builders
 ;;
 
+;; Common response builder
+
+(defn as
+  ([type]
+   (as-response nil type))
+  ([type data]
+   (as-response data type)))
+
+
 ;; Error response builders
 
 (defn as-busy
