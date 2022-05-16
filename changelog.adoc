@@ -2,6 +2,16 @@
 
 === Released
 
+==== v1.0.64 (2022-05-16)
+
+===== Added
+
+- The common response builder - `tenet.response/as`
+
+===== Fixed
+
+- Removed the helper function `cl-format` for the ability to work with GraalVM
+
 ==== v1.0.57 (2022-04-30)
 
 Public API is stable.
