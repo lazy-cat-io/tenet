@@ -2,6 +2,12 @@
 
 === Released
 
+==== v1.0.67 (2022-05-16)
+
+===== Fixed
+
+- After some research, the removal of the helper function `cl-format` was reverted
+
 ==== v1.0.64 (2022-05-16)
 
 ===== Added
