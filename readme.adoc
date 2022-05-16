@@ -96,13 +96,13 @@ Add the following dependency in your project:
 .project.clj or build.boot
 [source,clojure]
 ----
-[io.lazy-cat/tenet "1.0.57"]
+[io.lazy-cat/tenet "1.0.64"]
 ----
 
 .deps.edn or bb.edn
 [source,clojure]
 ----
-io.lazy-cat/tenet {:mvn/version "1.0.57"}
+io.lazy-cat/tenet {:mvn/version "1.0.64"}
 ----
 
 ==== Basic API
@@ -165,6 +165,21 @@ io.lazy-cat/tenet {:mvn/version "1.0.57"}
 (r/as-found x)
 (r/as-success x)
 (r/as-updated x)
+----
+
+===== Custom response builders
+
+[source,clojure]
+----
+
+(derive :org.acme.user/incorrect ::r/error) ;; or (swap! r/*registry conj :org.acme.user/incorrect)
+
+(r/as :org.acme.user/incorrect :foo) ;; => #tenet [:org.acme.user/incorrect :foo]
+(-> (r/as :org.acme.user/incorrect) (r/anomaly?)) ;; => true
+(-> (r/as :org.acme.user/incorrect :foo) (r/anomaly?)) ;; => true
+
+(r/as :org.acme.user/created :foo) ;; => #tenet [:org.acme.user/created :foo]
+(-> (r/as :org.acme.user/created :foo) (r/anomaly?)) ;; => false
 ----
 
 ==== Examples
