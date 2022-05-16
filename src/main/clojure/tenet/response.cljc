@@ -2,8 +2,7 @@
   (:refer-clojure :exclude [format type -> ->>])
   #?@(:clj
       [(:require
-         [clojure.core :as c]
-         [clojure.pprint :as pprint])
+         [clojure.core :as c])
        (:import
          (clojure.lang
            Associative
@@ -17,7 +16,6 @@
            Writer))]
       :cljs
       [(:require
-         [cljs.pprint :as pprint]
          [goog.string :as gstr]
          [goog.string.format])
        (:require-macros
@@ -32,12 +30,6 @@
   "Formats a string."
   #?(:clj  c/format
      :cljs gstr/format))
-
-
-;; TODO: [2022-04-23, ilshat@sultanov.team] Need to check working or not with GraalVM?
-(def cl-format
-  "An implementation of a Common Lisp compatible format function."
-  pprint/cl-format)
 
 
 
@@ -172,7 +164,7 @@
          (case key
            :type (Response. new-value data _meta)
            :data (Response. type new-value _meta)
-           (throw (IllegalArgumentException. ^String (cl-format nil "Response has no field for key - `~s`" key)))))
+           (throw (IllegalArgumentException. ^String (format "Response has no field for key - `%s`" (if (some? key) key "nil"))))))
 
        IPersistentCollection
        (equiv [_ other]
@@ -184,7 +176,9 @@
 
        Object
        (toString [_]
-         (cl-format nil "[~s ~s]" type data))
+         (if (some? data)
+           (format "[%s %s]" type data)
+           (format "[%s nil]" type)))
        (equals [_ other]
          (and (response? other)
               (= type (:type other))
@@ -255,11 +249,13 @@
        (case key
          :type (Response. new-value data _meta)
          :data (Response. type new-value _meta)
-         (throw (js/Error. (cl-format nil "Response has no field for key - `~s`" key)))))
+         (throw (js/Error. (format "Response has no field for key - `%s`" (if (some? key) key "nil"))))))
 
      Object
      (toString [_]
-       (cl-format nil "[~s ~s]" type data))
+       (if (some? data)
+         (format "[%s %s]" type data)
+         (format "[%s nil]" type)))
 
      IEquiv
      (-equiv [_ other]
@@ -328,7 +324,6 @@
      (boolean (:ns env))))
 
 
-;; TODO: add finally? [body handler finally]
 #?(:clj
    (defmacro safe
      "Extended version of try-catch."
