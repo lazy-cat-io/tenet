@@ -105,6 +105,10 @@ Add the following dependency in your project:
 io.lazy-cat/tenet {:mvn/version "1.0.64"}
 ----
 
+=== Limitations
+
+This library doesn't work with babashka (sci) - currently `deftype` is not supported.
+
 ==== Basic API
 
 [source,clojure]
