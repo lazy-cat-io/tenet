@@ -6,7 +6,7 @@
                               :jvm-opts    ["-server" "-Xmx4096m" "-Dclojure.compiler.direct-linking=true"]}
 
            :develop          {:extra-paths ["src/develop/clojure" "src/develop/resources"]
-                              :extra-deps  {org.clojure/clojurescript {:mvn/version "1.11.4"}
+                              :extra-deps  {org.clojure/clojurescript {:mvn/version "1.11.51"}
                                             criterium/criterium       {:mvn/version "0.4.6"}
                                             cider/piggieback          {:mvn/version "0.5.3"}
                                             nrepl/nrepl               {:mvn/version "0.9.0"}
@@ -30,7 +30,7 @@
 
            :nop              {:extra-deps {org.slf4j/slf4j-nop {:mvn/version "1.7.36"}}}
 
-           :outdated         {:extra-deps {com.github.liquidz/antq {:mvn/version "1.6.1"}}
+           :outdated         {:extra-deps {com.github.liquidz/antq {:mvn/version "1.6.2"}}
                               :main-opts  ["--main" "antq.core"]}
 
            :outdated/upgrade {:main-opts ["--main" "antq.core" "--upgrade" "--force"]}}}
