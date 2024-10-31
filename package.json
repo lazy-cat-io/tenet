@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "ws": "^8.5.0",
-    "npm-check-updates": "^12.5.4"
+    "npm-check-updates": "^17.1.9",
+    "ws": "^8.5.0"
   }
 }

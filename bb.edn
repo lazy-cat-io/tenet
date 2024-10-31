@@ -1,71 +1,107 @@
-{:min-bb-version
- "0.8.0"
+{:min-bb-version "1.12.194"
 
- :deps
- {io.lazy-cat/tools.project {:mvn/version "0.1.82"}}
+ :deps {babashka/fs {:mvn/version "0.5.22"}}
 
  :tasks
- {:requires        ([tools.project :as project]
-                    [tools.print :as print])
+ {:requires ([babashka.fs :as fs]
+             [babashka.process :as process]
+             [clojure.pprint :as pprint]
+             [clojure.string :as str])
 
-  :init            (do
-                     (def -project (project/read-project))
-                     (def -version (:version -project)))
+  :init (do
+          (def zone-id (java.time.ZoneId/of "UTC"))
+          (def formatter java.time.format.DateTimeFormatter/ISO_OFFSET_DATE_TIME)
+          (def timestamp (.format (java.time.ZonedDateTime/now zone-id) formatter))
 
-  :enter           (let [{:keys [doc print-doc?]
-                          :or   {print-doc? true}} (current-task)]
-                     (when (and print-doc? doc)
-                       (println (format "▸ [%s] %s" (:name -project) doc))))
+          (defn execute
+            [cmd]
+            (some->> cmd
+                     (process/tokenize)
+                     (process/process)
+                     :out
+                     (slurp)
+                     (str/trim-newline)))
 
-  ;;;;
+          (defn pretty-print
+            ([x]
+             (pretty-print x {}))
+            ([x {:keys [right-margin]
+                 :or   {right-margin 80}}]
+             (binding [*print-namespace-maps* false
+                       pprint/*print-right-margin* right-margin]
+               (pprint/pprint x))))
+
+          (def organization "lazy-cat-io")
+          (def repository "tenet")
+          (def lib "io.lazy-cat/tenet")
+          (def version (-> "version" (slurp) (str/trim-newline)))
+          (def branch (execute "git rev-parse --abbrev-ref HEAD"))
+          (def commit (execute "git rev-parse --short HEAD"))
+
+          (def meta
+            {:organization organization
+             :repository repository
+             :branch branch
+             :commit commit
+             :version version
+             :timestamp timestamp}))
+
+  :enter (let [{:keys [doc print-doc?]
+                :or   {print-doc? true}} (current-task)]
+           (when (and print-doc? doc)
+             (println (format "▸ [%s v%s] %s" lib version doc))))
+
+  ;;
   ;; Tasks
-  ;;;;
+  ;;
 
-  version          {:doc        "Show version"
-                    :print-doc? false
-                    :task       (print -version)}
+  setup {:doc  "Setup dependencies"
+         :task (shell "npm ci")}
 
-  project          {:doc        "Show project info"
-                    :print-doc? false
-                    :task       (print/pretty -project)}
+  outdated {:doc "Check for outdated dependencies"
+            :task (case (some-> *command-line-args* first str/lower-case)
+                    "upgrade" (shell "clojure -M:nop:outdated --main antq.core --upgrade --force")
+                    (shell "clojure -M:nop:outdated --main antq.core"))}
 
-  build.edn        {:doc  "Generate build.edn"
-                    :task (project/write-build-info -project)}
+  clean {:doc "Run cleanup"
+         :task (doseq [dir ["target" "coverage" "out" ".cljs_node_repl"]]
+                 (println (format "Removing %s..." dir))
+                 (fs/delete-tree dir))}
 
-  outdated         {:doc  "Check for outdated dependencies"
-                    :task (clojure "-T:build outdated")}
+  lint {:doc "Run linters"
+        :task (case (some-> *command-line-args* first str/lower-case)
+                "fix" (shell "cljfmt fix")
+                (do
+                  (shell "cljfmt check")
+                  (shell "clj-kondo --lint .")))}
 
-  outdated:upgrade {:doc  "Upgrade outdated dependencies"
-                    :task (clojure "-T:build outdated:upgrade")}
+  repl {:doc "Run nREPL"
+        :override-builtin true
+        :depends [clean -build:meta]
+        :task (shell "clj -M:bench:test:develop --main nrepl.cmdline --interactive")}
 
-  setup            {:doc  "Setup dependencies"
-                    :task (shell "npm ci")}
+  test {:doc "Run tests"
+        :depends [clean]
+        :task (case (some-> *command-line-args* first str/lower-case)
+                "clj" (shell "clojure -M:nop:test --main kaocha.runner --focus :clojure")
+                "cljs" (shell "clojure -M:nop:test --main kaocha.runner --focus :clojurescript")
+                (shell (str/join \space (into ["clojure -M:nop:test --main kaocha.runner"] *command-line-args*))))}
 
-  lint             {:doc  "Run linters"
-                    :task (do
-                            (shell "cljstyle check src")
-                            (shell "clj-kondo --lint src"))}
+  -build:meta {:doc "Build metadata"
+               :task (do
+                       (fs/create-dirs "src/main/resources/io/lazy-cat/tenet")
+                       (->> meta
+                            (pretty-print)
+                            (with-out-str)
+                            (spit "src/main/resources/io/lazy-cat/tenet/meta.edn")))}
 
-  lint:fix         {:doc  "Run linters & fix"
-                    :task (shell "cljstyle fix src")}
+  -build:jar {:doc "Build jar"
+              :depends [clean -build:meta]
+              :task (shell "clojure -T:build jar")}
 
-  clean            {:doc  "Cleanup"
-                    :task (clojure "-T:build clean")}
-
-  repl             {:doc     "Run REPL"
-                    :depends [clean build.edn]
-                    :task    (clojure "-T:build repl")}
-
-  test             {:doc     "Run tests"
-                    :depends [clean build.edn]
-                    :task    (clojure "-T:build test")}
-
-  jar              {:doc     "Make jar"
-                    :depends [clean build.edn]
-                    :task    (clojure "-T:build jar")}
-
-  install          {:doc  "Install the jar locally"
-                    :task (clojure "-T:build install")}
-
-  deploy           {:doc  "Deploy the jar to clojars"
-                    :task (clojure "-T:build deploy")}}}
+  build {:doc "Run build"
+         :print-doc? false
+         :task (case (some-> *command-line-args* first str/lower-case)
+                 "meta" (run '-build:meta)
+                 "jar" (run '-build:jar)
+                 (run '-build:jar))}}}

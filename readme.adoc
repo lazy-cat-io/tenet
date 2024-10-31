@@ -6,7 +6,7 @@ image:https://codecov.io/gh/lazy-cat-io/tenet/branch/master/graph/badge.svg?toke
 image:https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml/badge.svg[build,https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml]
 image:https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml/badge.svg[deploy,https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml]
 
-== tenet
+== io.lazy-cat/tenet
 
 A Clojure(Script) library, which helps to create explicit and understandable results to unify and simplify the data flow.
 
@@ -70,22 +70,11 @@ Create custom object/type and use getters and setters?
 This adds problems in further use and looks like OOP.
 Use metadata?
 Metadata cannot be added to some types of data.
-And what type of response is considered an error (anomaly)?
+And what type of response is considered an error?
 
 ==== Solution
 
-This library helps to unify responses and anomalies.
-Out of the box, there are general types of responses and all the necessary helper functions.
-
-In short, all the responses are a `Pair [type data]`.
-E.g. `[:org.acme.user/created {:user/id 42}]`.
-
-There are no requirements for the type of response and the type of data.
-Always the same data structure.
-
-We have a registry of basic anomalies to which you can add your own type, or you can use the global hierarchy using `derive` from the parent `:tenet.response/error`.
-The registry was added to increase the performance.
-Checking an anomaly in the registry takes ~15-25 ns, and checking using the global hierarchy takes ~120-150 ns.
+TBD
 
 See the performance link:src/bench/clojure/perf.clj[tests].
 
@@ -96,175 +85,23 @@ Add the following dependency in your project:
 .project.clj or build.boot
 [source,clojure]
 ----
-[io.lazy-cat/tenet "1.0.67"]
+[io.lazy-cat/tenet "2.0.0"]
 ----
 
 .deps.edn or bb.edn
 [source,clojure]
 ----
-io.lazy-cat/tenet {:mvn/version "1.0.67"}
+io.lazy-cat/tenet {:mvn/version "2.0.0"}
 ----
 
 === Limitations
 
-This library doesn't work with babashka (sci) - currently `deftype` is not supported.
+TBD
 
-==== Basic API
+=== API
 
-[source,clojure]
-----
-(ns example
-  (:require
-    [tenet.response :as r]))
-
-(r/anomaly? x)
-;; Exception and js/Error are anomalies
-;; Object, nil, default are not anomalies
-;; Other data types are anomalies if they are registered in the registry or inherited from `:tenet.response/error`
-
-(r/as-response x :your-response-type)
-----
-
-==== Anomaly registry
-
-[source,clojure]
-----
-:busy
-:conflict
-:error
-:forbidden
-:incorrect
-:interrupted
-:not-found
-:unauthorized
-:unavailable
-:unsupported
-----
-
-==== Response builders
-
-===== Error response builders
-
-[source,clojure]
-----
-(r/as-busy x)
-(r/as-conflict x)
-(r/as-error x)
-(r/as-forbidden x)
-(r/as-incorrect x)
-(r/as-interrupted x)
-(r/as-not-found x)
-(r/as-unauthorized x)
-(r/as-unavailable x)
-(r/as-unsupported x)
-----
-
-===== Success response builders
-
-[source,clojure]
-----
-(r/as-accepted x)
-(r/as-created x)
-(r/as-deleted x)
-(r/as-found x)
-(r/as-success x)
-(r/as-updated x)
-----
-
-===== Custom response builders
-
-[source,clojure]
-----
-
-(derive :org.acme.user/incorrect ::r/error) ;; or (swap! r/*registry conj :org.acme.user/incorrect)
-
-(r/as :org.acme.user/incorrect :foo) ;; => #tenet [:org.acme.user/incorrect :foo]
-(-> (r/as :org.acme.user/incorrect) (r/anomaly?)) ;; => true
-(-> (r/as :org.acme.user/incorrect :foo) (r/anomaly?)) ;; => true
-
-(r/as :org.acme.user/created :foo) ;; => #tenet [:org.acme.user/created :foo]
-(-> (r/as :org.acme.user/created :foo) (r/anomaly?)) ;; => false
-----
-
-==== Examples
-
-===== Basic API
-
-[source,clojure]
-----
-(r/as-not-found 42) ;; => #tenet [:not-found 42]
-
-(r/anomaly? (r/as-not-found 42)) ;; => true
-
-(r/anomaly? (r/as-created 42)) ;; => false
-
-(:type (r/as-created 42)) ;; => :created
-
-(:data (r/as-created 42)) ;; => 42
-
-@(r/as-created 42) ;; => 42
-
-(-> (r/as-created 42)
-    (with-meta {:foo :bar})
-    (meta)) ;; => {:foo :bar}
-----
-
-===== Destructuring
-
-[source,clojure]
-----
-(let [[type data] (r/as-not-found 42)]
-  {:type type, :data data}) ;; => {:type :not-found, :data 42}
-
-(let [{:keys [type data]} (r/as-not-found 42)]
-    {:type type, :data data}) ;; => {:type :not-found, :data 42}
-----
-
-===== Update response type
-
-[source,clojure]
-----
-(-> (r/as-not-found 42)
-    (r/as-incorrect)) ;; => #tenet [:incorrect 42]
-----
-
-===== Update response data
-
-[source,clojure]
-----
-(-> (r/as-not-found 42)
-    (r/as-incorrect)
-    (update :data inc)) ;; => #tenet [:incorrect 43]
-
-(-> (r/as-not-found {:foo {:bar 42}})
-    (r/as-incorrect)
-    (update-in [:data :foo :bar] inc)) ;; => #tenet [:incorrect {:foo {:bar 43}}]
-----
-
-==== Helper macros
-
-[source,clojure]
-----
-(def boom!
-  (constantly :error))
-
-;; just like `some->`, but checks for anomalies
-(r/-> 42 inc) ;; => 43
-(r/-> 42 inc boom!) ;; => :error
-(r/-> 42 inc boom! inc) ;; => :error
-
-
-;; just like `some->>`, but checks for anomalies
-(r/->> 42 inc) ;; => 43
-(r/->> 42 inc boom!) ;; => :error
-(r/->> 42 inc boom! inc) ;; => :error
-
-
-;; handle exceptions
-(r/safe (Exception. "boom!")) ;; => nil
-(r/safe (Exception. "boom!") #(r/as-error (ex-message %))) ;; => #tenet [:error "boom!"]
-----
+TBD
 
 === License
 
-link:license[Copyright © 2022 lazy-cat.io]
+link:license[Copyright © 2022-2024 lazy-cat.io]
