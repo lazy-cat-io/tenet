@@ -1,0 +1,12 @@
+{:auto-add-ns-to-new-files? true
+ :clean {:ns-inner-blocks-indentation :next-line
+         :sort {:ns true
+                :require true
+                :import true
+                :refer true}}
+ :cljfmt-config-path ".cljfmt.edn"
+ :code-lens {:segregate-test-references true}
+ :dependency-scheme "zipfile"
+ :keep-parens-when-threading? true
+ :notify-references-on-file-change true
+ :semantic-tokens? true}

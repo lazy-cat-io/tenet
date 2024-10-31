@@ -1,32 +1,29 @@
-{:output       {:exclude-files
-                ["src/main/clojure/data_readers.clj"
-                 ".cljstyle"]}
+{:output {:exclude-files []}
 
  :config-paths []
 
- :lint-as      {tenet.response/->  clojure.core/->
-                tenet.response/->> clojure.core/->>}
+ :lint-as {}
 
- :linters      {:consistent-alias
-                {:aliases {clojure.java.shell shell
-                           clojure.pprint     pprint
-                           clojure.set        set
-                           clojure.string     str}}
+ :linters {:consistent-alias
+           {:aliases {clojure.java.shell shell
+                      clojure.pprint     pprint
+                      clojure.set        set
+                      clojure.string     str}}
 
-                :unresolved-namespace
-                {:exclude [user criterium.core]}
+           :unresolved-namespace
+           {:exclude [user criterium.core]}
 
-                :unresolved-symbol
-                {:exclude [(cljs.test/are [thrown? thrown-with-msg?])
-                           (cljs.test/is [thrown? thrown-with-msg?])
-                           (clojure.test/are [thrown? thrown-with-msg?])
-                           (clojure.test/is [thrown? thrown-with-msg?])]}
+           :unresolved-symbol
+           {:exclude [(cljs.test/are [thrown? thrown-with-msg?])
+                      (cljs.test/is [thrown? thrown-with-msg?])
+                      (clojure.test/are [thrown? thrown-with-msg?])
+                      (clojure.test/is [thrown? thrown-with-msg?])]}
 
-                :unsorted-required-namespaces
-                {:level :warning}
+           :unsorted-required-namespaces
+           {:level :warning}
 
-                :unused-referred-var
-                {:exclude {cljs.test    [deftest is testing use-fixtures]
-                           clojure.test [deftest is testing use-fixtures]}}}
+           :unused-referred-var
+           {:exclude {cljs.test    [deftest is testing use-fixtures]
+                      clojure.test [deftest is testing use-fixtures]}}}
 
  :hooks        {}}

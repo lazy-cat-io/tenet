@@ -6,5 +6,5 @@ coverage
 node_modules
 out
 target
-build.edn
+meta.edn
 *.iml
