@@ -129,7 +129,9 @@
 
   deploy {:doc "Deploy jar"
           :task (if-not -deployable?
-                  (println "Allowed branches: main, develop")
+                  (do
+                    (println "Allowed branches: main, develop")
+                    (println (format "Current branch: %s" -branch)))
                   (do
                     (run '-build:jar)
                     (shell "clojure -T:build deploy")))}}}
