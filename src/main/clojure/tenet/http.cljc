@@ -24,7 +24,7 @@
    ::see-other 303
    ::not-modified 304
    ::use-proxy 305
-   ::switch-proxy 306 ; Unused - This response code is no longer used; it is just reserved. It was used in a previous version of the HTTP/1.1 specification.
+   ::switch-proxy 306 ;; Unused - This response code is no longer used; it is just reserved. It was used in a previous version of the HTTP/1.1 specification.
    ::temporary-redirect 307
    ::permanent-redirect 308
    ::bad-request 400
@@ -68,6 +68,10 @@
    ::not-extended 510
    ::network-authentication-required 511})
 
+;;;;
+;; Registry
+;;;;
+
 (def ^:private mappings
   {nil ::ok
    :tenet.response/error ::internal-server-error})
@@ -84,8 +88,28 @@
      :cljs (set! mappings (dissoc mappings kind)))
   kind)
 
+;;;;
+;; Response
+;;;;
+
 (defn status
   [x]
   (->> (r/kind x)
        (get mappings)
        (get statuses)))
+
+;;;;
+;; Middleware
+;;;;
+
+(defn response->status
+  [res]
+  (assoc res :status (status (:body res))))
+
+(defn wrap-status-middleware
+  [handler]
+  (fn
+    ([req]
+     (response->status (handler req)))
+    ([req respond raise]
+     (handler req (fn [res] (respond (response->status res))) raise))))
