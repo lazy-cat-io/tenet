@@ -1,10 +1,16 @@
 (ns tenet.http
   (:refer-clojure :exclude [derive underive])
   (:require
-   [tenet.proto :as r]))
+   [tenet.proto :as r]
+   [tenet.response]))
+
+;;;;
+;; Defaults
+;;;;
 
 (def statuses
-  {::continue 100
+  {nil 200 ;; default status if the response kind is not derived
+   ::continue 100
    ::switching-protocols 101
    ::processing 102
    ::early-hints 103
@@ -24,7 +30,7 @@
    ::see-other 303
    ::not-modified 304
    ::use-proxy 305
-   ::switch-proxy 306 ;; Unused - This response code is no longer used; it is just reserved. It was used in a previous version of the HTTP/1.1 specification.
+   ::switch-proxy 306 ;; unused - this response code is no longer used, it is just reserved. It was used in a previous version of the HTTP/1.1 specification.
    ::temporary-redirect 307
    ::permanent-redirect 308
    ::bad-request 400
