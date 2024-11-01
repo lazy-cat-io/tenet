@@ -14,6 +14,43 @@
 ;;;;
 
 #?(:clj
+   (extend-protocol r/Builder
+     nil
+     (as [_ kind] [kind nil])
+
+     Object
+     (as [obj kind] [kind obj])
+
+     Throwable
+     (as [e kind] [kind e])
+
+     Keyword
+     (as [k kind] [kind k])
+
+     PersistentList
+     (as [xs kind] (into [kind] (rest xs)))
+
+     PersistentVector
+     (as [xs kind] (.assocN xs 0 kind)))
+
+   :cljs
+   (extend-protocol r/Builder
+     nil
+     (as [_ kind] [kind nil])
+
+     default
+     (as [obj kind] [kind obj])
+
+     js/Error
+     (as [e kind] [kind e])
+
+     cljs.core/Keyword
+     (as [k kind] [kind k])
+
+     cljs.core/PersistentVector
+     (as [xs kind] (assoc xs 0 kind))))
+
+#?(:clj
    (extend-protocol r/Response
      nil
      (kind [_])
@@ -80,3 +117,7 @@
 (defn kind
   [x]
   (r/kind x))
+
+(defn as
+  [kind x]
+  (r/as x kind))
