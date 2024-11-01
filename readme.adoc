@@ -4,7 +4,6 @@ image:https://img.shields.io/clojars/v/io.lazy-cat/tenet.svg[clojars,link=https:
 
 image:https://codecov.io/gh/lazy-cat-io/tenet/branch/master/graph/badge.svg?token=BGGNUI43Y2[codecov,https://codecov.io/gh/lazy-cat-io/tenet]
 image:https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml/badge.svg[build,https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml]
-image:https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml/badge.svg[deploy,https://github.com/lazy-cat-io/tenet/actions/workflows/deploy.yml]
 
 == io.lazy-cat/tenet
 
@@ -85,13 +84,13 @@ Add the following dependency in your project:
 .project.clj or build.boot
 [source,clojure]
 ----
-[io.lazy-cat/tenet "2.0.0"]
+[io.lazy-cat/tenet "RELEASE"]
 ----
 
 .deps.edn or bb.edn
 [source,clojure]
 ----
-io.lazy-cat/tenet {:mvn/version "2.0.0"}
+io.lazy-cat/tenet {:mvn/version "RELEASE"}
 ----
 
 === Limitations
