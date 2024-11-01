@@ -50,9 +50,9 @@
      cljs.core/PersistentVector
      (kind [xs] (first xs))))
 
-;;
+;;;;
 ;; Error registry
-;;
+;;;;
 
 (def ^:private errors
   #{::error})
@@ -69,9 +69,9 @@
      :cljs (set! errors (disj errors kind)))
   kind)
 
-;;
+;;;;
 ;; Public API
-;;
+;;;;
 
 (defn error?
   [x]
