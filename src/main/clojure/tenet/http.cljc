@@ -75,13 +75,13 @@
 (defn derive
   [kind parent]
   #?(:clj (alter-var-root #'mappings assoc kind parent)
-     :cljs (set! #'mappings (assoc mappings kind parent)))
+     :cljs (set! mappings (assoc mappings kind parent)))
   kind)
 
 (defn underive
   [kind]
   #?(:clj (alter-var-root #'mappings dissoc kind)
-     :cljs (set! #'mappings (dissoc mappings kind)))
+     :cljs (set! mappings (dissoc mappings kind)))
   kind)
 
 (defn status
