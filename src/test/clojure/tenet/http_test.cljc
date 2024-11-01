@@ -2,8 +2,7 @@
   (:require
    #?@(:clj  [[clojure.test :refer [deftest testing is]]]
        :cljs [[cljs.test :refer [deftest testing is]]])
-   [tenet.http :as sut]
-   [tenet.response]))
+   [tenet.http :as sut]))
 
 (def f
   #(sut/wrap-status-middleware (constantly %)))
