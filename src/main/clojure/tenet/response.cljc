@@ -6,6 +6,7 @@
      (:import
       (clojure.lang
        Keyword
+       PersistentHashSet
        PersistentList
        PersistentVector))))
 
@@ -112,7 +113,8 @@
 
 (defn error?
   [x]
-  (contains? errors (r/kind x)))
+  #?(:clj (.contains ^PersistentHashSet errors (r/kind x))
+     :cljs (-lookup ^cljs.core/ILookup errors (r/kind x))))
 
 (defn kind
   [x]
