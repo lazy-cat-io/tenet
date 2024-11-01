@@ -14,67 +14,81 @@ A Clojure(Script) library, which helps to create explicit and understandable res
 
 ==== Problem statement
 
-Usually, when working in a team, it is necessary to agree beforehand on the type of results to be used.
-Someone uses maps, someone uses vectors, someone uses monads like `Either`, `Maybe`, etc.
+Typically, when collaborating on a project, it is essential to establish beforehand the nature of the outcomes to be employed.
+Some individuals opt for maps, while others prefer vectors, and still others rely on monads such as `Either`, `Maybe`, and so on.
+It is not always evident when a function yields data without any accompanying context, such as `nil`, `42`, and so forth.
 
-It is not always clear when a function returns data without some context (e.g. `nil`, `42`, etc).
+What does `nil` mean?
 
-What does `nil` mean: No data?
-Didn't do anything?
-Did something go wrong?
+It can mean:
 
-What does `42` mean: User id?
-Age?
+- No data
+- Something is done or not
+- Something went wrong
 
-Such answers make you look at the current implementation and spend time understanding the current context.
+What does `42` mean:
 
-Imagine that we have a function containing some kind of business logic:
+- User id?
+- Age?
+
+Such responses make you think about the current implementation and take time to understand the current context.
+
+Imagine that we have a function that contains some kind of business logic:
 
 [source,clojure]
 ----
-(defn create-user! [user]
-  (if-not (valid? user)
-    ;; returns the response that the data is not valid
-    (if-not (exists? user)
-      ;; returns the response that the email is occupied
-      (db/insert! user)))) ;; returns the response that the user was created or an error occurred while writing data to the database
+(defn create-user!
+  [user]
+  (cond
+    (not (valid? user)) ??? ;; returns a response that the given data is not valid
+    (exists? user) ??? ;; returns a response that the email is occupied
+    :else
+    (try
+      (insert! user)
+      ??? ;; returns a response that a new user has been created
+      (catch SomeDbException _
+        ??? ;; returns a response indicating that
+            ;; there was a problem writing data to the database
+        ))))
 ----
 
-In this case, there may be several possible responses:
+In this case, there are several possible responses that could occur:
 
-- the user data is not valid
-- the email is occupied
-- an error occurred while writing data to the database
-- or finally, a response about a successful operation: e.g. user id or data
+- The user's data may not be valid.
+- The email address may be occupied.
+- An error may have occurred while writing the data to the database.
+- Or, finally, a successful response may be returned, such as a user ID or data.
 
-There is a useful data type in the Clojure - a `keyword` that can be used to add some context to the response:
+There is a useful data type in Clojure - `qualified (namespaced) keywords`, which can be used to add some context to responses.
 
 - `:user/incorrect`, `:user/exists`
-- `:user/created` or `:org.acme.user/created`
+- `:user/created` or `:com.your-company.user/created`
 
-Having such an answer, it is immediately clear what exactly happened - we have the context and data.
-Most of the time we do not write code, we read it.
-And this is very important.
+With this information, it is clear what happened - we have the context and the data.
+Most of the time, we don't write code, we read it, and that's very important.
 
-We have decided on the context, but how to add it?
-Key-value in the map?
-Vector?
-Monad?
-Metadata?
-And how to understand which answer is considered an error (anomaly)?
+We have added the context, but how should we use it?
+Should we use a key-value pair within a map, a vector, a monad, or metadata?
+
+And how should we decide which type of response should be classified as an error?
 
 We used all the above methods in our practice, and it has always been something inconvenient.
 
-What should be the structure of the map, vector?
-Create custom object/type and use getters and setters?
+What should be the structure of the map or vector?
+
+Should we create custom object/type and use getters and setters?
 This adds problems in further use and looks like OOP.
-Use metadata?
-Metadata cannot be added to some types of data.
-And what type of response is considered an error?
+Should we Use metadata? Unfortunately, metadata cannot be added to some types of data.
+And what kind of response is considered an error?
 
 ==== Solution
 
-TBD
+This library helps to unify responses.
+
+In short, all the responses are a vector `[:kind ...]` similar to the hiccup syntax.
+E.g. `[:org.your-company.user/created {:user/id 42}]`.
+
+There are no requirements for the kind of response and the type of your data.
 
 See the performance link:src/bench/clojure/perf.clj[tests].
 
@@ -93,10 +107,6 @@ Add the following dependency in your project:
 ----
 io.lazy-cat/tenet {:mvn/version "RELEASE"}
 ----
-
-=== Limitations
-
-TBD
 
 === API
 
