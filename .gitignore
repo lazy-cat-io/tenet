@@ -1,6 +1,7 @@
 .clj-kondo/.cache
 .cljs_node_repl
 .cpcache
+.lsp/.cache
 .idea
 coverage
 node_modules
