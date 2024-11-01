@@ -21,7 +21,8 @@
                                 lambdaisland/kaocha-cloverage {:mvn/version "1.1.89"}
                                 com.lambdaisland/kaocha-cljs {:mvn/version "1.5.154"}}}
 
-           :build {:extra-deps {io.github.clojure/tools.build {:git/tag "v0.10.5", :git/sha "2a21b7a"}}
+           :build {:extra-deps {io.github.clojure/tools.build {:git/tag "v0.10.5", :git/sha "2a21b7a"}
+                                slipset/deps-deploy {:mvn/version "0.2.2"}}
                    :jvm-opts ["-Dclojure.compiler.direct-linking=true"
                               "-Dclojure.spec.skip-macros=true"]
                    :ns-default build}

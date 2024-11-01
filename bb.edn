@@ -9,9 +9,9 @@
              [clojure.string :as str])
 
   :init (do
-          (def zone-id (java.time.ZoneId/of "UTC"))
-          (def formatter java.time.format.DateTimeFormatter/ISO_OFFSET_DATE_TIME)
-          (def timestamp (.format (java.time.ZonedDateTime/now zone-id) formatter))
+          (def -zone-id (java.time.ZoneId/of "UTC"))
+          (def -formatter java.time.format.DateTimeFormatter/ISO_OFFSET_DATE_TIME)
+          (def -timestamp (.format (java.time.ZonedDateTime/now -zone-id) -formatter))
 
           (defn execute
             [cmd]
@@ -31,29 +31,46 @@
                        pprint/*print-right-margin* right-margin]
                (pprint/pprint x))))
 
-          (def organization "lazy-cat-io")
-          (def repository "tenet")
-          (def lib "io.lazy-cat/tenet")
-          (def version (-> "version" (slurp) (str/trim-newline)))
-          (def branch (execute "git rev-parse --abbrev-ref HEAD"))
-          (def commit (execute "git rev-parse --short HEAD"))
+          (def -organization "lazy-cat-io")
+          (def -repository "tenet")
+          (def -lib "io.lazy-cat/tenet")
+          (def -branch (-> (execute "git rev-parse --abbrev-ref HEAD") (str/lower-case)))
+          (def -commit (-> (execute "git rev-parse --short HEAD") (str/lower-case)))
+          (def -git-count-revs (-> (execute "git rev-list HEAD --count")))
 
-          (def meta
-            {:organization organization
-             :repository repository
-             :branch branch
-             :commit commit
-             :version version
-             :timestamp timestamp}))
+          (def -deployable?
+            (contains? #{"main" "develop"} -branch))
+
+          (def -version
+            (let [v (-> "version.tmpl"
+                        (slurp)
+                        (str/trim-newline)
+                        (str/replace "{{ git-count-revs }}" -git-count-revs))]
+              (case -branch
+                "main" v
+                (format "%s-SNAPSHOT" v))))
+
+          (def -meta
+            {:organization -organization
+             :repository -repository
+             :branch -branch
+             :commit -commit
+             :version -version
+             :timestamp -timestamp}))
 
   :enter (let [{:keys [doc print-doc?]
                 :or   {print-doc? true}} (current-task)]
            (when (and print-doc? doc)
-             (println (format "▸ [%s v%s] %s" lib version doc))))
+             (println (format "▸ [%s v%s] %s" -lib -version doc))))
 
   ;;
   ;; Tasks
   ;;
+
+  version {:doc "Show version"
+           :print-doc? false
+           :override-builtin true
+           :task (println -version)}
 
   setup {:doc  "Setup dependencies"
          :task (shell "npm ci")}
@@ -90,18 +107,29 @@
   -build:meta {:doc "Build metadata"
                :task (do
                        (fs/create-dirs "src/main/resources/io/lazy-cat/tenet")
-                       (->> meta
+                       (->> -meta
                             (pretty-print)
                             (with-out-str)
                             (spit "src/main/resources/io/lazy-cat/tenet/meta.edn")))}
 
   -build:jar {:doc "Build jar"
               :depends [clean -build:meta]
-              :task (shell "clojure -T:build jar")}
+              :task (shell (format "clojure -T:build jar :version '\"%s\"'" -version))}
 
   build {:doc "Run build"
          :print-doc? false
          :task (case (some-> *command-line-args* first str/lower-case)
                  "meta" (run '-build:meta)
                  "jar" (run '-build:jar)
-                 (run '-build:jar))}}}
+                 (run '-build:jar))}
+
+  install {:doc "Install jar"
+           :depends [-build:jar]
+           :task (shell "clojure -T:build install")}
+
+  deploy {:doc "Deploy jar"
+          :task (if-not -deployable?
+                  (println "Allowed branches: main, develop")
+                  (do
+                    (run '-build:jar)
+                    (shell "clojure -T:build deploy")))}}}
