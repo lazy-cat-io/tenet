@@ -117,14 +117,11 @@ jobs:
           echo 'CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }}' >> $GITHUB_ENV;
           echo 'CLOJARS_PASSWORD=${{ secrets.CLOJARS_PASSWORD }}' >> $GITHUB_ENV;
 
-      - name: Build jar
-        run: bb build jar
+      - name: Publish jar
+        run: bb deploy
 
       - name: Upload jar
         uses: actions/upload-artifact@v4
         with:
           path: target/tenet.jar
           name: tenet-${{ steps.tenet.outputs.version }}.jar
-
-      - name: Publish jar
-        run: bb deploy
