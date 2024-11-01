@@ -39,16 +39,13 @@
           (def -git-count-revs (-> (execute "git rev-list HEAD --count")))
 
           (def -deployable?
-            (contains? #{"main" "develop"} -branch))
+            (= "main" -branch))
 
           (def -version
-            (let [v (-> "version.tmpl"
-                        (slurp)
-                        (str/trim-newline)
-                        (str/replace "{{ git-count-revs }}" -git-count-revs))]
-              (case -branch
-                "main" v
-                (format "%s-SNAPSHOT" v))))
+            (-> "version.tmpl"
+                (slurp)
+                (str/trim-newline)
+                (str/replace "{{ git-count-revs }}" -git-count-revs)))
 
           (def -meta
             {:organization -organization

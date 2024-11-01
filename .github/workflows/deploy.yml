@@ -1,32 +1,9 @@
-name: build
+name: deploy
 
 on:
   push:
     branches:
       - main
-    paths:
-      - ".github/workflows/**"
-      - "src/**"
-      - ".cljfmt.edn"
-      - "bb.edn"
-      - "build.clj"
-      - "deps.edn"
-      - "package.json"
-      - "tests.edn"
-      - "version.tmpl"
-  pull_request:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/**"
-      - "src/**"
-      - ".cljfmt.edn"
-      - "bb.edn"
-      - "build.clj"
-      - "deps.edn"
-      - "package.json"
-      - "tests.edn"
-      - "version.tmpl"
 
 jobs:
   test:
@@ -89,7 +66,17 @@ jobs:
           path: coverage
           name: coverage-${{ steps.tenet.outputs.version }}
 
-  build:
+      - name: Publish coverage
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/codecov.json
+          flags: clojure,clojurescript
+          os: ubuntu
+          fail_ci_if_error: false
+          verbose: true
+
+  publish:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     needs: test
     runs-on: ubuntu-latest
@@ -127,6 +114,8 @@ jobs:
         run: |
           TENET_VERSION=$(bb version)
           echo "version=${TENET_VERSION}" >> $GITHUB_OUTPUT
+          echo 'CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }}' >> $GITHUB_ENV;
+          echo 'CLOJARS_PASSWORD=${{ secrets.CLOJARS_PASSWORD }}' >> $GITHUB_ENV;
 
       - name: Build jar
         run: bb build jar
@@ -136,3 +125,6 @@ jobs:
         with:
           path: target/tenet.jar
           name: tenet-${{ steps.tenet.outputs.version }}.jar
+
+      - name: Publish jar
+        run: bb deploy
