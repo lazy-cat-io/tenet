@@ -23,4 +23,5 @@
     (is (nil? (sut/kind 42)))
     (is (nil? (sut/kind "42")))
     (is (= ::sut/error (sut/kind e)))
-    (is (= ::created (sut/kind [::created 42])))))
+    (is (= ::created (sut/kind [::created 42])))
+    #?(:clj (is (= ::created (sut/kind '(::created 42)))))))
