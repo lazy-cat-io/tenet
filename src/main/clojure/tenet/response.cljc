@@ -28,10 +28,10 @@
      (kind [k] k)
 
      PersistentList
-     (kind [xs] (first xs))
+     (kind [xs] (.first xs))
 
      PersistentVector
-     (kind [xs] (first xs)))
+     (kind [xs] (.nth xs 0)))
 
    :cljs
    (extend-protocol r/Response
@@ -48,7 +48,7 @@
      (kind [k] k)
 
      cljs.core/PersistentVector
-     (kind [xs] (first xs))))
+     (kind [xs] (-nth xs 0))))
 
 ;;;;
 ;; Error registry
