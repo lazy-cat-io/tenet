@@ -9,6 +9,23 @@
 (def jar-file "target/tenet.jar")
 (def src-dirs ["src/main/clojure" "src/main/resources"])
 
+(defn pom-template
+  [version]
+  [[:description "A Clojure(Script) library, which helps to create explicit and understandable results to unify and simplify the data flow."]
+   [:url "https://github.com/lazy-cat-io/tenet"]
+   [:licenses
+    [:license
+     [:name "MIT License"]
+     [:url "https://github.com/lazy-cat-io/tenet/blob/main/license"]]]
+   [:developers
+    [:developer
+     [:name "Ilshat Sultanov"]]]
+   [:scm
+    [:url "https://github.com/lazy-cat-io/tenet"]
+    [:connection "scm:git:https://github.com/lazy-cat-io/tenet.git"]
+    [:developerConnection "scm:git:ssh:git@github.com:lazy-cat-io/tenet.git"]
+    [:tag (str "v" version)]]])
+
 (defn jar
   [{:keys [version]}]
   (println "Writing pom.xml...")
@@ -16,7 +33,8 @@
                 :lib lib
                 :version version
                 :basis @basis
-                :src-dirs src-dirs})
+                :src-dirs src-dirs
+                :pom-data (pom-template version)})
   (println "Copying sources...")
   (b/copy-dir {:src-dirs src-dirs
                :target-dir class-dir})
