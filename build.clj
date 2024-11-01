@@ -1,16 +1,16 @@
 (ns build
   (:require
-   [clojure.string :as str]
-   [clojure.tools.build.api :as b]))
+   [clojure.tools.build.api :as b]
+   [deps-deploy.deps-deploy :as d]))
 
 (def lib 'io.lazy-cat/tenet)
-(def version (-> "version" (slurp) (str/trim-newline)))
 (def class-dir "target/classes")
 (def basis (delay (b/create-basis {:project "deps.edn"})))
 (def jar-file "target/tenet.jar")
 (def src-dirs ["src/main/clojure" "src/main/resources"])
 
-(defn jar [_]
+(defn jar
+  [{:keys [version]}]
   (println "Writing pom.xml...")
   (b/write-pom {:class-dir class-dir
                 :lib lib
@@ -25,3 +25,14 @@
           :jar-file jar-file})
   (println "Done..."))
 
+(defn install
+  [_]
+  (d/deploy {:installer :local
+             :artifact jar-file
+             :pom-file (b/pom-path {:lib lib, :class-dir class-dir})}))
+
+(defn deploy
+  [_]
+  (d/deploy {:installer :remote
+             :artifact jar-file
+             :pom-file (b/pom-path {:lib lib, :class-dir class-dir})}))

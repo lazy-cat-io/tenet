@@ -2,9 +2,6 @@ name: build
 
 on:
   push:
-    branches:
-      - main
-      - develop
     paths:
       - ".github/workflows/**"
       - "src/**"
@@ -15,9 +12,6 @@ on:
       - "tests.edn"
       - "version"
   pull_request:
-    branches:
-      - main
-      - develop
     paths:
       - ".github/workflows/**"
       - "src/**"
@@ -38,12 +32,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup variables
-        id: tenet
-        run: |
-          TENET_VERSION=$(cat version)
-          echo "version=${TENET_VERSION}" >> $GITHUB_OUTPUT
-
       - name: Setup clojure tools
         uses: DeLaGuardo/setup-clojure@12.5
         with:
@@ -62,6 +50,12 @@ jobs:
         uses: actions/setup-node@v4.1.0
         with:
           node-version: "22.11.0"
+
+      - name: Setup variables
+        id: tenet
+        run: |
+          TENET_VERSION=$(bb version)
+          echo "version=${TENET_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Install deps
         run: bb setup
@@ -99,7 +93,7 @@ jobs:
           fail_ci_if_error: false
           verbose: true
 
-  uberjar:
+  publish:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     needs: test
     runs-on: ubuntu-latest
@@ -108,12 +102,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Setup variables
-        id: tenet
-        run: |
-          TENET_VERSION=$(cat version)
-          echo "version=${TENET_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Setup openjdk
         uses: actions/setup-java@v4
@@ -138,6 +126,14 @@ jobs:
           key: ubuntu-deps-${{ hashFiles('deps.edn') }}
           restore-keys: ubuntu-deps-
 
+      - name: Setup variables
+        id: tenet
+        run: |
+          TENET_VERSION=$(bb version)
+          echo "version=${TENET_VERSION}" >> $GITHUB_OUTPUT
+          echo 'CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }}' >> $GITHUB_ENV;
+          echo 'CLOJARS_PASSWORD=${{ secrets.CLOJARS_PASSWORD }}' >> $GITHUB_ENV;
+
       - name: Build jar
         run: bb build jar
 
@@ -146,3 +142,6 @@ jobs:
         with:
           path: target/tenet.jar
           name: tenet-${{ steps.tenet.outputs.version }}.jar
+
+      - name: Publish jar
+        run: bb deploy
