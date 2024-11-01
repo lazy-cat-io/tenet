@@ -78,7 +78,7 @@
   repl {:doc "Run nREPL"
         :override-builtin true
         :depends [clean -build:meta]
-        :task (shell "clj -M:bench:test:develop --main nrepl.cmdline --interactive")}
+        :task (shell "clj -M:bench:test:develop --main nrepl.cmdline --interactive --middleware '[cider.nrepl/cider-middleware,cider.piggieback/wrap-cljs-repl]'")}
 
   test {:doc "Run tests"
         :depends [clean]
