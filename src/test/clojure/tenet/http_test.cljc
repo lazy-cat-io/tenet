@@ -13,9 +13,14 @@
            ((f {:status 500, :body 42})
             {}))))
 
-  (testing "vector as unified response"
-    (sut/derive ::created ::sut/created)
-    (is (= {:status 201, :body [::created 42]}
-           ((f {:status 500, :body [::created 42]})
-            {})))
-    (sut/underive ::created)))
+  (testing "vector as an unified response"
+    (let [before {:status 200, :body [::created 42]}
+          after {:status 201, :body [::created 42]}]
+      (is (= before
+             ((f {:status 500, :body [::created 42]}) {})))
+      (sut/derive ::created ::sut/created)
+      (is (= after
+             ((f {:status 500, :body [::created 42]}) {})))
+      (sut/underive ::created)
+      (is (= before
+             ((f {:status 500, :body [::created 42]}) {}))))))
