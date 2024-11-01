@@ -70,10 +70,10 @@
 
   lint {:doc "Run linters"
         :task (case (some-> *command-line-args* first str/lower-case)
-                "fix" (shell "cljfmt fix")
+                "fix" (shell "cljfmt fix src")
                 (do
-                  (shell "cljfmt check")
-                  (shell "clj-kondo --lint .")))}
+                  (shell "cljfmt check src")
+                  (shell "clj-kondo --lint src")))}
 
   repl {:doc "Run nREPL"
         :override-builtin true
