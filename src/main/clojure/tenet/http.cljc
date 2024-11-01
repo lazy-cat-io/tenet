@@ -69,7 +69,7 @@
    ::network-authentication-required 511})
 
 (def ^:private mappings
-  {nil ::not-implemented
+  {nil ::ok
    :tenet.response/error ::internal-server-error})
 
 (defn derive
