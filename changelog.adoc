@@ -1,14 +1,13 @@
 == Changelog
 
-=== Unreleased
-
-==== v2.0.0 (2024-10-??)
-
-TBD
-
----
-
 === Released
+
+==== v2.0.101 (2024-11-02)
+
+**BREAKING CHANGES**:
+
+- In version 2, the API has undergone a complete redesign in order to improve performance and make the API more user-friendly
+- The previous version of the library is stored in the `v1` branch
 
 ==== v1.0.67 (2022-05-16)
 
