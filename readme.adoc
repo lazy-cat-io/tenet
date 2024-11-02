@@ -54,10 +54,12 @@ Imagine that we have a function that contains some kind of business logic:
 
 In this case, there are several possible responses that could occur:
 
-- The user's data may not be valid.
-- The email address may be occupied.
-- An error may have occurred while writing the data to the database.
-- Or, finally, a successful response may be returned, such as a user ID or data.
+- The user's data may not be valid
+- The email address may be occupied
+- An error may have occurred while writing the data to the database
+- Or, finally, a successful response may be returned, such as a user ID or data
+
+And how can we add context?
 
 There is a useful data type in Clojure - `qualified (namespaced) keywords`, which can be used to add some context to responses.
 
@@ -68,9 +70,7 @@ With this information, it is clear what happened - we have the context and the d
 Most of the time, we don't write code, we read it, and that's very important.
 
 We have added the context, but how should we use it?
-Should we use a key-value pair within a map, a vector, a monad, or metadata?
-
-And how should we decide which type of response should be classified as an error?
+Should we use a key-value pair within a map, a vector, a monad, or metadata? And how should we decide which type of response should be classified as an error?
 
 We used all the above methods in our practice, and it has always been something inconvenient.
 
@@ -85,12 +85,13 @@ And what kind of response is considered an error?
 
 This library helps to unify responses.
 
-In short, all the responses are a vector `[:kind ...]` similar to the hiccup syntax.
-E.g. `[:org.your-company.user/created {:user/id 42}]`.
+In short, all the responses are a vector `[<kind> <any data> ...]` similar to the hiccup syntax.
+E.g. `[:com.your-company.user/created {:user/id 42}]`.
 
 There are no requirements for the kind of response and the type of your data.
 
-See the performance link:src/bench/clojure/perf.clj[tests].
+This library is very small. It is based on only 7 lines of code (2 protocols), and the default implementation is less than 80
+lines (without comments and documentation).
 
 === Getting started
 
@@ -111,6 +112,10 @@ io.lazy-cat/tenet {:mvn/version "RELEASE"}
 === API
 
 TBD
+
+=== Performance
+
+See the performance link:src/bench/clojure/perf.clj[tests].
 
 === License
 
