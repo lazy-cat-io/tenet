@@ -12,7 +12,7 @@
 ;; Defaults
 ;;;;
 
-(def statuses
+(defonce statuses
   {nil 200 ;; default status if the response kind is not derived
    ::continue 100
    ::switching-protocols 101
@@ -82,7 +82,7 @@
 ;; Registry
 ;;;;
 
-(def ^:private mappings
+(defonce mappings
   {nil ::ok
    :tenet.response/error ::internal-server-error})
 
