@@ -4,6 +4,11 @@
    [tenet.http :as http]
    [tenet.response :as r]))
 
+;; MacBook Pro (15-inch, 2018/2019)
+;; Intel(R) Core(TM) i7-8850H (12) @ 2.60 GHz
+;; 16.00 GiB
+;; macOS Sequoia 15.0.1 x86_64
+
 ;;;;
 ;; Defaults
 ;;;;
