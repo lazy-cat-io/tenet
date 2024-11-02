@@ -1,6 +1,7 @@
 image:https://img.shields.io/github/license/lazy-cat-io/tenet[license,link=license]
 image:https://img.shields.io/github/v/release/lazy-cat-io/tenet.svg[https://github.com/lazy-cat-io/tenet/releases]
 image:https://img.shields.io/clojars/v/io.lazy-cat/tenet.svg[clojars,link=https://clojars.org/io.lazy-cat/tenet]
+image:https://img.shields.io/badge/babashka,%20clojure,%20clojurescript-just_sultanov?style=flat&color=blue&label=%20supports[]
 
 image:https://codecov.io/gh/lazy-cat-io/tenet/branch/master/graph/badge.svg?token=BGGNUI43Y2[codecov,https://codecov.io/gh/lazy-cat-io/tenet]
 image:https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml/badge.svg[build,https://github.com/lazy-cat-io/tenet/actions/workflows/build.yml]

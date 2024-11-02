@@ -58,7 +58,7 @@
   :enter (let [{:keys [doc print-doc?]
                 :or   {print-doc? true}} (current-task)]
            (when (and print-doc? doc)
-             (println (format "▸ [%s v%s] %s" -lib -version doc))))
+             (println (format "\n▸ [%s v%s] %s" -lib -version doc))))
 
   ;;
   ;; Tasks
@@ -94,11 +94,23 @@
         :depends [clean -build:meta]
         :task (shell "clj -M:bench:test:develop --main nrepl.cmdline --interactive --middleware '[cider.nrepl/cider-middleware,cider.piggieback/wrap-cljs-repl]'")}
 
+  -test:bb {:doc "Run babashka tests"
+            :task (shell "./src/test/bb/runner.clj")}
+  -test:clj {:doc "Run clojure tests"
+             :task (shell "clojure -M:nop:test --main kaocha.runner --focus :clojure")}
+  -test:cljs {:doc "Run clojurescript tests"
+              :task (shell "clojure -M:nop:test --main kaocha.runner --focus :clojurescript")}
+  -test:all {:task (do
+                     (shell "clojure -M:nop:test --main kaocha.runner")
+                     (run '-test:bb))}
+
   test {:doc "Run tests"
         :depends [clean]
         :task (case (some-> *command-line-args* first str/lower-case)
-                "clj" (shell "clojure -M:nop:test --main kaocha.runner --focus :clojure")
-                "cljs" (shell "clojure -M:nop:test --main kaocha.runner --focus :clojurescript")
+                "all" (run '-test:all)
+                "bb" (run 'test:bb)
+                "clj" (run 'test:clj)
+                "cljs" (run 'test:cljs)
                 (shell (str/join \space (into ["clojure -M:nop:test --main kaocha.runner"] *command-line-args*))))}
 
   -build:meta {:doc "Build metadata"

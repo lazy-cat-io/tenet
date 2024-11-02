@@ -58,7 +58,7 @@ jobs:
         run: bb lint
 
       - name: Run tests
-        run: bb test
+        run: bb test all
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
