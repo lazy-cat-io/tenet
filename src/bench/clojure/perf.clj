@@ -35,12 +35,12 @@
 (bench/quick-bench
  (r/kind 42)) ; => nil
 
-; (out) Evaluation count : 45745500 in 6 samples of 7624250 calls.
-; (out)              Execution time mean : -1.919144 ns
-; (out)     Execution time std-deviation : 0.014673 ns
-; (out)    Execution time lower quantile : -1.935134 ns ( 2.5%)
-; (out)    Execution time upper quantile : -1.905225 ns (97.5%)
-; (out)                    Overhead used : 15.049260 ns
+; (out) Evaluation count : 46984380 in 6 samples of 7830730 calls.
+; (out)              Execution time mean : 0.432813 ns
+; (out)     Execution time std-deviation : 0.038412 ns
+; (out)    Execution time lower quantile : 0.391860 ns ( 2.5%)
+; (out)    Execution time upper quantile : 0.470783 ns (97.5%)
+; (out)                    Overhead used : 12.341496 ns
 
 ;;;;
 ;; Vector
@@ -59,17 +59,17 @@
 ; (out)    Execution time upper quantile : 4.951825 ns (97.5%)
 ; (out)                    Overhead used : 15.041038 ns
 
-(r/derive :user/exists)
+(r/derive :user/exists) ; => :user/exists
 
 (bench/quick-bench
  (r/error? user-exists)) ; => true
 
-; (out) Evaluation count : 12798372 in 6 samples of 2133062 calls.
-; (out)              Execution time mean : 28.207162 ns
-; (out)     Execution time std-deviation : 0.263008 ns
-; (out)    Execution time lower quantile : 27.779911 ns ( 2.5%)
-; (out)    Execution time upper quantile : 28.468211 ns (97.5%)
-; (out)                    Overhead used : 15.048625 ns
+; (out) Evaluation count : 14381382 in 6 samples of 2396897 calls.
+; (out)              Execution time mean : 26.636206 ns
+; (out)     Execution time std-deviation : 0.239904 ns
+; (out)    Execution time lower quantile : 26.394512 ns ( 2.5%)
+; (out)    Execution time upper quantile : 26.934575 ns (97.5%)
+; (out)                    Overhead used : 15.050630 ns
 
 (r/underive :user/exists) ; => :user/exists
 
@@ -109,14 +109,24 @@
 (bench/quick-bench
  (http/status user-exists)) ; => 409
 
-; (out) Evaluation count : 10354914 in 6 samples of 1725819 calls.
-; (out)              Execution time mean : 43.376203 ns
-; (out)     Execution time std-deviation : 0.175731 ns
-; (out)    Execution time lower quantile : 43.201832 ns ( 2.5%)
-; (out)    Execution time upper quantile : 43.553214 ns (97.5%)
-; (out)                    Overhead used : 15.041038 ns
+; (out) Evaluation count : 12864336 in 6 samples of 2144056 calls.
+; (out)              Execution time mean : 34.513275 ns
+; (out)     Execution time std-deviation : 0.259090 ns
+; (out)    Execution time lower quantile : 34.107100 ns ( 2.5%)
+; (out)    Execution time upper quantile : 34.782836 ns (97.5%)
+; (out)                    Overhead used : 12.343262 ns
 
 (r/underive :user/exists) ; => :user/exists
 (http/underive :user/exists) ; => :user/exists
 
 (r/error? user-exists) ; => false
+
+(bench/quick-bench
+ (http/status user-exists)) ; => 200
+
+; (out) Evaluation count : 21069486 in 6 samples of 3511581 calls.
+; (out)              Execution time mean : 16.189475 ns
+; (out)     Execution time std-deviation : 0.041101 ns
+; (out)    Execution time lower quantile : 16.130563 ns ( 2.5%)
+; (out)    Execution time upper quantile : 16.233606 ns (97.5%)
+; (out)                    Overhead used : 12.343262 ns

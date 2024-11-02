@@ -6,7 +6,7 @@
      (:import
       (clojure.lang
        Keyword
-       PersistentHashSet
+       IPersistentSet
        PersistentList
        PersistentVector))))
 
@@ -49,7 +49,7 @@
      (as [k kind] [kind k])
 
      cljs.core/PersistentVector
-     (as [xs kind] (assoc xs 0 kind))))
+     (as [xs kind] (-assoc-n xs 0 kind))))
 
 #?(:clj
    (extend-protocol r/Response
@@ -113,8 +113,8 @@
 
 (defn error?
   [x]
-  #?(:clj (.contains ^PersistentHashSet errors (r/kind x))
-     :cljs (-lookup ^cljs.core/ILookup errors (r/kind x))))
+  #?(:clj (.contains ^IPersistentSet errors (r/kind x))
+     :cljs (boolean (-lookup ^cljs.core/ILookup errors (r/kind x)))))
 
 (defn kind
   [x]
