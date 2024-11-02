@@ -48,14 +48,22 @@
      (as [xs kind] (into [kind] (rest xs)))
 
      r/Response
-     (kind [xs] (.first xs))))
+     (kind [xs]
+       #?(:bb (first xs)
+          :clj (.first xs)))))
 
 (extend-type #?(:clj PersistentVector :cljs cljs.core/PersistentVector)
   r/Builder
-  (as [xs kind] (#?(:clj .assocN :cljs -assoc-n) xs 0 kind))
+  (as [xs kind]
+    #?(:bb (assoc xs 0 kind)
+       :clj (.assocN xs 0 kind)
+       :cljs (-assoc-n xs 0 kind)))
 
   r/Response
-  (kind [xs] (#?(:clj .nth :cljs -nth) xs 0)))
+  (kind [xs]
+    #?(:bb (nth xs 0)
+       :clj (.nth xs 0)
+       :cljs (-nth xs 0))))
 
 ;;;;
 ;; Registry
@@ -82,7 +90,8 @@
 
 (defn error?
   [x]
-  #?(:clj (.contains ^IPersistentSet errors (r/kind x))
+  #?(:bb (contains? errors (r/kind x))
+     :clj (.contains ^IPersistentSet errors (r/kind x))
      :cljs (boolean (-lookup ^cljs.core/ILookup errors (r/kind x)))))
 
 (defn kind
