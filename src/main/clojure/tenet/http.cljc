@@ -2,7 +2,11 @@
   (:refer-clojure :exclude [derive underive])
   (:require
    [tenet.proto :as r]
-   [tenet.response]))
+   [tenet.response])
+  #?(:clj
+     (:import
+      (clojure.lang
+       IPersistentMap))))
 
 ;;;;
 ;; Defaults
@@ -100,9 +104,14 @@
 
 (defn status
   [x]
-  (->> (r/kind x)
-       (get mappings)
-       (get statuses)))
+  #?(:clj
+     (->> (r/kind x)
+          (.valAt ^IPersistentMap mappings)
+          (.valAt ^IPersistentMap statuses))
+     :cljs
+     (->> (r/kind x)
+          (-lookup ^cljs.core/ILookup mappings)
+          (-lookup ^cljs.core/ILookup statuses))))
 
 ;;;;
 ;; Middleware
