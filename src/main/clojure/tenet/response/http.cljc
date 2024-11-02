@@ -1,8 +1,8 @@
-(ns tenet.http
+(ns tenet.response.http
   (:refer-clojure :exclude [derive underive])
   (:require
-   [tenet.proto :as r]
-   [tenet.response])
+   [tenet.response]
+   [tenet.response.proto :as r])
   #?(:clj
      (:import
       (clojure.lang

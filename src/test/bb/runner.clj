@@ -7,11 +7,11 @@
 (cp/add-classpath "src/main/clojure:src/test/clojure")
 
 (require
- 'tenet.http-test
- 'tenet.response-test)
+ 'tenet.response-test
+ 'tenet.response.http-test)
 
 (def test-results
-  (t/run-tests 'tenet.response-test 'tenet.http-test))
+  (t/run-tests 'tenet.response-test 'tenet.response.http-test))
 
 (let [{:keys [fail error]} test-results]
   (when (pos? (+ fail error))

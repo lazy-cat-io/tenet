@@ -1,7 +1,7 @@
 (ns example
   (:require
-   [tenet.http :as http]
-   [tenet.response :as r]))
+   [tenet.response :as r]
+   [tenet.response.http :as http]))
 
 ;;;;
 ;; Defaults
@@ -84,4 +84,4 @@
 (http/derive :user/exists ::http/conflict) ;; => :user/exists
 (http/status [:user/exists {:user/id 42}]) ;; => 409
 
-;; Namespace `tenet.http` contains `wrap-status-middleware' - perhaps this middleware will be useful for you
+;; Namespace `tenet.response.http` contains `wrap-status-middleware' - perhaps this middleware will be useful for you
