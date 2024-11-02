@@ -1,8 +1,8 @@
-(ns tenet.http-test
+(ns tenet.response.http-test
   (:require
    #?@(:clj  [[clojure.test :refer [deftest testing is]]]
        :cljs [[cljs.test :refer [deftest testing is]]])
-   [tenet.http :as sut]))
+   [tenet.response.http :as sut]))
 
 (def handler
   #(sut/wrap-status-middleware (constantly %)))

@@ -1,8 +1,8 @@
 (ns perf
   (:require
    [criterium.core :as bench]
-   [tenet.http :as http]
-   [tenet.response :as r]))
+   [tenet.response :as r]
+   [tenet.response.http :as http]))
 
 ;; MacBook Pro (15-inch, 2018/2019)
 ;; Intel(R) Core(TM) i7-8850H (12) @ 2.60 GHz

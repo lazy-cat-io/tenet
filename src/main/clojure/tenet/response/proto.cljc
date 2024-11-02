@@ -1,4 +1,4 @@
-(ns tenet.proto)
+(ns tenet.response.proto)
 
 (defprotocol Response
   (kind [this]))

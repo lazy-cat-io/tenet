@@ -1,7 +1,7 @@
 (ns tenet.response
   (:refer-clojure :exclude [derive underive])
   (:require
-   [tenet.proto :as r])
+   [tenet.response.proto :as r])
   #?(:clj
      (:import
       (clojure.lang
