@@ -61,7 +61,7 @@
 ;; Registry
 ;;;;
 
-(def ^:private errors
+(defonce errors
   #{::error})
 
 (defn derive
