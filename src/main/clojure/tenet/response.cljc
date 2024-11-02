@@ -5,8 +5,8 @@
   #?(:clj
      (:import
       (clojure.lang
-       Keyword
        IPersistentSet
+       Keyword
        PersistentList
        PersistentVector))))
 
@@ -14,82 +14,51 @@
 ;; Defaults
 ;;;;
 
+(extend-type nil
+  r/Builder
+  (as [_ kind] [kind nil])
+
+  r/Response
+  (kind [_]))
+
+(extend-type #?(:clj Object :cljs default)
+  r/Builder
+  (as [obj kind] [kind obj])
+
+  r/Response
+  (kind [_]))
+
+(extend-type #?(:clj Throwable :cljs js/Error)
+  r/Builder
+  (as [e kind] [kind e])
+
+  r/Response
+  (kind [_] ::error))
+
+(extend-type #?(:clj Keyword :cljs cljs.core/Keyword)
+  r/Builder
+  (as [k kind] [kind k])
+
+  r/Response
+  (kind [k] k))
+
 #?(:clj
-   (extend-protocol r/Builder
-     nil
-     (as [_ kind] [kind nil])
-
-     Object
-     (as [obj kind] [kind obj])
-
-     Throwable
-     (as [e kind] [kind e])
-
-     Keyword
-     (as [k kind] [kind k])
-
-     PersistentList
+   (extend-type PersistentList
+     r/Builder
      (as [xs kind] (into [kind] (rest xs)))
 
-     PersistentVector
-     (as [xs kind] (.assocN xs 0 kind)))
+     r/Response
+     (kind [xs] (.first xs))))
 
-   :cljs
-   (extend-protocol r/Builder
-     nil
-     (as [_ kind] [kind nil])
+(extend-type #?(:clj PersistentVector :cljs cljs.core/PersistentVector)
+  r/Builder
+  (as [xs kind] (#?(:clj .assocN :cljs -assoc-n) xs 0 kind))
 
-     default
-     (as [obj kind] [kind obj])
-
-     js/Error
-     (as [e kind] [kind e])
-
-     cljs.core/Keyword
-     (as [k kind] [kind k])
-
-     cljs.core/PersistentVector
-     (as [xs kind] (-assoc-n xs 0 kind))))
-
-#?(:clj
-   (extend-protocol r/Response
-     nil
-     (kind [_])
-
-     Object
-     (kind [_])
-
-     Throwable
-     (kind [_] ::error)
-
-     Keyword
-     (kind [k] k)
-
-     PersistentList
-     (kind [xs] (.first xs))
-
-     PersistentVector
-     (kind [xs] (.nth xs 0)))
-
-   :cljs
-   (extend-protocol r/Response
-     nil
-     (kind [_])
-
-     default
-     (kind [_])
-
-     js/Error
-     (kind [_] ::error)
-
-     cljs.core/Keyword
-     (kind [k] k)
-
-     cljs.core/PersistentVector
-     (kind [xs] (-nth xs 0))))
+  r/Response
+  (kind [xs] (#?(:clj .nth :cljs -nth) xs 0)))
 
 ;;;;
-;; Error registry
+;; Registry
 ;;;;
 
 (def ^:private errors
@@ -108,7 +77,7 @@
   kind)
 
 ;;;;
-;; Public API
+;; Response
 ;;;;
 
 (defn error?
